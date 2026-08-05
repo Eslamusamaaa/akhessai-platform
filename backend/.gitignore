@@ -1,0 +1,9 @@
+.vercel
+.env
+*.db
+*.db-*
+__pycache__/
+.pytest_cache/
+venv/
+migrate_to_neon.py
+
