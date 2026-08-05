@@ -29,3 +29,6 @@ app-release.apk
 .vscode/
 .DS_Store
 Thumbs.db
+
+# ── Vercel ───────────────────────────────────────────────
+.vercel/

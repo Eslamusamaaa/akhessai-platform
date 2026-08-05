@@ -282,6 +282,10 @@ docker-compose exec backend python seed.py
 python seed.py
 ```
 
+### Deploying to production
+
+For a Vercel deployment (frontend + backend as separate projects, Postgres instead of SQLite), see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ### 4. Demo credentials
 
 | Role | Username | Password |

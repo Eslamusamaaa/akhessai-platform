@@ -1331,7 +1331,9 @@ class VectorStoreClient:
         self._vector_size: int | None = None
 
         try:
-            self.client = QdrantClient(url=settings.QDRANT_URL, timeout=5)
+            # Short timeout: on serverless cold starts with no Qdrant configured,
+            # fail fast into the in-memory fallback instead of stalling the request.
+            self.client = QdrantClient(url=settings.QDRANT_URL, timeout=1.5)
             self.client.get_collections()
             self.is_connected = True
         except Exception as e:
