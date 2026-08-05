@@ -531,6 +531,7 @@ def submit_response(
     db.commit()
     
     next_q = get_next_question(session, responses)
+    finished = False
     if not next_q:
         # Advance informant or assessment status
         if session.current_informant == "parent":
@@ -539,9 +540,18 @@ def submit_response(
         elif session.current_informant == "teacher":
             session.current_informant = "specialist"
             session.status = "clinical_observation"
+        else:
+            finished = True
         db.commit()
         
-    return {"status": "success", "current_informant": session.current_informant, "session_status": session.status}
+    return {
+        "status": "success",
+        "current_informant": session.current_informant,
+        "session_status": session.status,
+        "finished": finished,
+        "next_question": next_q,
+        "responses_count": len(responses)
+    }
 
 # --- Clinical Observation ---
 
