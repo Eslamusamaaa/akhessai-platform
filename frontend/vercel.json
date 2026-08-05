@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://REPLACE-WITH-YOUR-BACKEND-PROJECT.vercel.app/:path*"
+      "destination": "https://backend-nine-bice-71.vercel.app/:path*"
     }
   ]
 }
