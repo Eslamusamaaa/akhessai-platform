@@ -1,0 +1,31 @@
+# ── Secrets ──────────────────────────────────────────────
+.env
+backend/.env
+*.env
+!*.env.example
+
+# ── Python ───────────────────────────────────────────────
+backend/venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# ── Node / Frontend ──────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
+
+# ── Databases ────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Build artifacts ──────────────────────────────────────
+app-release.apk
+*.apk
+
+# ── Editors / OS ─────────────────────────────────────────
+.vscode/
+.DS_Store
+Thumbs.db

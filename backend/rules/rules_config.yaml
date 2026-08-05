@@ -1,0 +1,103 @@
+# Rules configuration — Special Education Assessment Platform
+# Thresholds are calibrated per specialty to balance sensitivity and specificity
+
+triggers:
+
+  autism:
+    domains: ["social_communication", "restricted_repetitive", "pragmatic_language"]
+    threshold: 55.0           # Average across domains (lower = more sensitive for ASD)
+    any_domain_threshold: 70.0  # Trigger if ANY single domain exceeds this
+    specialty_selected_name: "autism"
+    module_name: "autism_screen"
+
+  adhd:
+    domains: ["attention", "hyperactivity", "impulsivity", "executive_function"]
+    threshold: 60.0
+    any_domain_threshold: 75.0
+    min_age_months: 48        # DSM-5: symptoms must be present before age 12, but diagnosis requires ≥4 years
+    specialty_selected_name: "adhd"
+    module_name: "adhd_screen"
+
+  speech_language:
+    domains: ["expressive_language", "receptive_language", "articulation", "pragmatic_language"]
+    threshold: 50.0           # Lower threshold for early intervention sensitivity
+    any_domain_threshold: 65.0
+    specialty_selected_name: "speech_language"
+    module_name: "speech_language_intake"
+
+  learning_disabilities:
+    domains: ["academic_skills", "executive_function"]
+    threshold: 60.0
+    any_domain_threshold: 75.0
+    age_band_required: "6-18"  # Cannot assess academic skills before formal schooling
+    specialty_selected_name: "learning_disabilities"
+    module_name: "learning_disabilities_intake"
+
+  sensory_processing:
+    domains: ["sensory_reactivity", "vestibular", "proprioceptive"]
+    threshold: 55.0
+    any_domain_threshold: 70.0
+    specialty_selected_name: "sensory_processing"
+    module_name: "sensory_integration_intake"
+
+  behavior_emotional:
+    domains: ["emotional_regulation", "externalizing", "internalizing"]
+    threshold: 55.0
+    any_domain_threshold: 70.0
+    specialty_selected_name: "behavior_emotional"
+    module_name: "behavior_regulation_intake"
+
+
+# Severity bands (0-100 normalized concern score)
+severity_bands:
+  - level: 1
+    name_en: "Minimal"
+    name_ar: "ضمن الحدود الطبيعية"
+    max_score: 19.99
+
+  - level: 2
+    name_en: "Mild"
+    name_ar: "خفيف"
+    max_score: 39.99
+
+  - level: 3
+    name_en: "Moderate"
+    name_ar: "متوسط"
+    max_score: 59.99
+
+  - level: 4
+    name_en: "Significant"
+    name_ar: "شديد"
+    max_score: 79.99
+
+  - level: 5
+    name_en: "Severe"
+    name_ar: "شديد جداً"
+    max_score: 100.00
+
+
+# Cross-informant discrepancy detection
+discrepancy:
+  threshold_delta: 25.0       # Point gap between parent and teacher triggers a flag
+  fallback_priority: 2
+  rationale_template_ar: "فجوة تقييمية بمقدار {delta} نقطة بين تقييم الوالدين والمعلم في مجال ({domain_ar}) — يُوصى بجمع معلومات إضافية"
+
+
+# Priority matrix configuration
+priority:
+  tier_1_conditions:
+    # Priority 1: Urgent — any of the following triggers immediate escalation
+    min_level5_domains: 1       # Any Level-5 domain
+    min_level4_domains: 2       # OR two or more Level-4 domains
+    specialist_safety_flag: true  # OR specialist flags self-harm/safety concern
+
+  tier_2_conditions:
+    min_level4_domains: 1       # One Level-4 domain
+    min_level3_domains: 2       # OR two or more Level-3 domains
+    discrepancy_flag: true       # OR cross-informant discrepancy
+
+  tier_3_description: "All domains within Levels 1-2 with no cross-informant discrepancies"
+
+
+# Strengths profile: domains with scores below this are considered clinical strengths
+strengths_threshold: 25.0

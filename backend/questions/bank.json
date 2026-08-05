@@ -1,0 +1,1430 @@
+[
+  {
+    "id": "q_core_01",
+    "is_core": true,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "عندما تنادي على طفلك باسمه في بيئة هادئة، كيف يستجيب عادةً؟",
+    "options": [
+      {"label_ar": "يلتفت دائمًا ويستجيب فورًا", "points": 0.0},
+      {"label_ar": "يستجيب أحيانًا أو يحتاج إلى تكرار النداء", "points": 33.3},
+      {"label_ar": "نادرًا ما يستجيب حتى عند تكرار النداء", "points": 66.6},
+      {"label_ar": "لا يستجيب لاسمه على الإطلاق", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_02",
+    "is_core": true,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["attention"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "likert_1_5",
+    "label_ar": "يجد طفلي صعوبة بالغة في التركيز على لعبة أو نشاط واحد لأكثر من بضع دقائق.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_03",
+    "is_core": true,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["expressive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يستطيع طفلك تكوين جمل قصيرة من كلمتين أو أكثر للتعبير عن رغباته؟",
+    "options": [
+      {"label_ar": "نعم، يكوّن جملًا بسهولة وبشكل منتظم", "points": 0.0},
+      {"label_ar": "نعم، ولكن بصعوبة أو بكلمات معدودة", "points": 50.0},
+      {"label_ar": "لا، لا يستطيع إطلاقًا تكوين جملة", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_04",
+    "is_core": true,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["receptive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل ينفذ طفلك التوجيهات اليومية البسيطة (مثل: أحضر حذاءك، أغلق الباب) بشكل صحيح دون حاجة لإشارة جسدية؟",
+    "options": [
+      {"label_ar": "نعم، دائمًا وبسهولة", "points": 0.0},
+      {"label_ar": "أحيانًا أو يحتاج إلى مساعدة لفهم التوجيه", "points": 50.0},
+      {"label_ar": "نادرًا أو لا يستجيب للتوجيهات الشفهية إطلاقًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_05",
+    "is_core": true,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "multi_select",
+    "label_ar": "أي من السلوكيات التالية تلاحظها على طفلك بشكل متكرر؟ (اختر كل ما ينطبق)",
+    "options": [
+      {"label_ar": "ينزعج بشدة من أصوات عادية كالمكنسة أو مجفف الشعر ويغطي أذنيه", "points": 33.3},
+      {"label_ar": "يرفض قص الشعر أو الأظافر بشكل مبالغ فيه أو يرفض ارتداء ملابس بعينها", "points": 33.3},
+      {"label_ar": "يبحث عن الدوران أو الاصطدام بالأثاث أو الضغط الشديد على جسمه", "points": 33.3},
+      {"label_ar": "لا يبدو أنه يشعر بالألم أو لا ينتبه للأصوات العالية جداً", "points": 33.3}
+    ]
+  },
+  {
+    "id": "q_core_06",
+    "is_core": true,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["emotional_regulation"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "عندما يُمنع طفلك من شيء يريده أو يواجه إحباطاً بسيطاً، كيف تكون ردة فعله الغالبة؟",
+    "options": [
+      {"label_ar": "يهدأ بسرعة ويتقبل الأمر أو يبحث عن بديل", "points": 0.0},
+      {"label_ar": "يغضب قليلاً ثم يهدأ بمساعدة بسيطة منك", "points": 40.0},
+      {"label_ar": "يدخل في نوبة غضب شديدة تستمر طويلاً ويصعب جداً تهدئته", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_07",
+    "is_core": true,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يواجه طفلك صعوبة واضحة في فهم مسائل الرياضيات البسيطة مقارنةً بأقرانه في نفس العمر؟",
+    "options": [
+      {"label_ar": "لا، مستواه مناسب لعمره أو أعلى", "points": 0.0},
+      {"label_ar": "يواجه بعض الصعوبات الطفيفة مع مواد بعينها", "points": 50.0},
+      {"label_ar": "يواجه صعوبة بالغة ومستمرة في أساسيات الحساب", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_08",
+    "is_core": true,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["attention"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "teacher",
+    "type": "likert_1_5",
+    "label_ar": "يتشتت انتباه الطالب بسهولة أثناء شرح الدرس ويصعب إعادة تركيزه.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_09",
+    "is_core": true,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "هل يشارك الطالب في اللعب أو العمل الجماعي مع زملائه بشكل تلقائي؟",
+    "options": [
+      {"label_ar": "نعم، يبادر بالتفاعل ويشارك بشكل ممتاز", "points": 0.0},
+      {"label_ar": "يتفاعل فقط إذا بادر الآخرون أو جُبر على المشاركة", "points": 50.0},
+      {"label_ar": "يفضل العزلة التامة ويتجنب أي تفاعل مع الزملاء", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_10",
+    "is_core": true,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "مستوى قراءة الطالب وفهمه للنصوص مقارنةً بزملائه في نفس الصف:",
+    "options": [
+      {"label_ar": "ضمن المستوى الطبيعي أو أعلى من المتوسط", "points": 0.0},
+      {"label_ar": "أقل من المستوى بشكل ملحوظ ويحتاج إلى دعم", "points": 50.0},
+      {"label_ar": "أقل بكثير ويحتاج إلى تدخل مكثف وفردي", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_11",
+    "is_core": true,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يبادر طفلك من تلقاء نفسه إلى التفاعل معك أو مع أشخاص آخرين (مثل: يأتي ليريك شيئًا، يدعوك للعب)؟",
+    "options": [
+      {"label_ar": "نعم، يبادر باستمرار بمشاركة الآخرين تلقائيًا", "points": 0.0},
+      {"label_ar": "أحيانًا ومع أفراد مقربين فقط", "points": 33.3},
+      {"label_ar": "نادرًا ما يبادر وينتظر أن يبدأ الآخرون", "points": 66.6},
+      {"label_ar": "لا يبادر إطلاقًا ويبدو غير مهتم بالتفاعل", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_core_12",
+    "is_core": true,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["emotional_regulation"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "كيف يتعامل الطالب مع التغيير المفاجئ في الجدول الدراسي أو الانتقال من نشاط لآخر؟",
+    "options": [
+      {"label_ar": "يتكيف بسهولة ودون مشاكل", "points": 0.0},
+      {"label_ar": "يحتاج إلى بعض التحضير المسبق ثم يتكيف", "points": 33.3},
+      {"label_ar": "يبدي مقاومة واضحة أو ضيقًا ملحوظًا عند التغيير", "points": 66.6},
+      {"label_ar": "يُصاب بضائقة شديدة وغير قابل للتهدئة عند أي تغيير", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_verbal_status",
+    "is_core": true,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["expressive_language"],
+    "specialty_tags": ["speech_language", "autism"],
+    "age_bands": ["0-6"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل ينطق طفلك بكلمات واضحة ومفهومة للتعبير عن نفسه؟",
+    "options": [
+      {"label_ar": "نعم، كلمات كثيرة وجمل", "points": 0.0},
+      {"label_ar": "نعم، كلمات قليلة ومفردة", "points": 50.0},
+      {"label_ar": "لا، لا ينطق بأي كلمة على الإطلاق", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_vocabulary_count",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["expressive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "كم عدد الكلمات التقريبية التي يستخدمها طفلك بانتظام للتواصل؟",
+    "depends_on": {
+      "question_id": "q_verbal_status",
+      "answer_equals": ["نعم، كلمات كثيرة وجمل", "نعم، كلمات قليلة ومفردة"]
+    },
+    "options": [
+      {"label_ar": "أكثر من 50 كلمة", "points": 0.0},
+      {"label_ar": "بين 10 إلى 50 كلمة", "points": 50.0},
+      {"label_ar": "أقل من 10 كلمات", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_preverbal_comm",
+    "is_core": true,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism", "speech_language"],
+    "age_bands": ["0-6"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "كيف يعبر طفلك عن رغباته واحتياجاته دون كلمات؟",
+    "depends_on": {
+      "question_id": "q_verbal_status",
+      "answer_equals": ["لا، لا ينطق بأي كلمة على الإطلاق"]
+    },
+    "options": [
+      {"label_ar": "يشير بإصبعه بوضوح للشيء المراد مع التواصل البصري", "points": 0.0},
+      {"label_ar": "يسحب يد شخص بالغ ويضعها على الشيء دون تواصل بصري", "points": 50.0},
+      {"label_ar": "يبكي أو يصرخ دون أي محاولة لتوجيه الآخرين لما يريد", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["restricted_repetitive"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "likert_1_5",
+    "label_ar": "يقوم طفلي بحركات جسدية متكررة بشكل مستمر مثل رفرفة اليدين، الدوران حول نفسه، أو هز الجسم.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "عندما تشير لطفلك نحو شيء مثير للاهتمام (مثل طيارة في السماء)، كيف يتفاعل؟",
+    "options": [
+      {"label_ar": "ينظر إلى الشيء ثم يتبادل النظر معك مشاركًا الاهتمام", "points": 0.0},
+      {"label_ar": "ينظر إلى الشيء فقط دون التفاعل البصري معك", "points": 50.0},
+      {"label_ar": "يتجاهل الإشارة تمامًا ولا ينظر للاتجاه الذي تشير إليه", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_03",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["restricted_repetitive"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل لدى طفلك اهتمامات محددة جداً يتحدث عنها أو ينشغل بها لساعات طويلة على حساب أنشطة أخرى؟",
+    "options": [
+      {"label_ar": "لا، لديه اهتمامات متنوعة وطبيعية لعمره", "points": 0.0},
+      {"label_ar": "لديه اهتمامات مفضلة لكن يمكن انتزاعه منها بسهولة", "points": 33.3},
+      {"label_ar": "لديه اهتمامات ضيقة جداً تستغرق وقتًا طويلاً ويصعب إيقافها", "points": 66.6},
+      {"label_ar": "اهتمامه محصور في موضوع واحد بشكل مبالغ فيه يعيق حياته اليومية", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_04",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["restricted_repetitive"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "كيف يتفاعل طفلك مع التغييرات المفاجئة في روتينه اليومي (مثل تغيير طريق الذهاب للمدرسة، أو تأجيل نشاط معتاد)؟",
+    "options": [
+      {"label_ar": "يتقبل التغيير بسهولة دون انزعاج يذكر", "points": 0.0},
+      {"label_ar": "يبدي انزعاجًا عابرًا ثم يتكيف", "points": 33.3},
+      {"label_ar": "يُصاب بضيق واضح ويستغرق وقتًا طويلاً للتكيف", "points": 66.6},
+      {"label_ar": "يدخل في نوبة شديدة جداً ويرفض الاستمرار عند أي تغيير بسيط في الروتين", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_05",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يشارك طفلك في اللعب التخيلي أو التمثيلي (مثل: التظاهر بأنه طبيب، طبخ وهمي، تمثيل شخصيات)؟",
+    "options": [
+      {"label_ar": "نعم، يلعب ألعابًا تخيلية متنوعة وإبداعية", "points": 0.0},
+      {"label_ar": "أحيانًا ولكن بشكل محدود أو بتوجيه من الآخرين", "points": 40.0},
+      {"label_ar": "نادرًا، يفضل ترتيب الأشياء أو اللعب الآلي بدلاً من التخيل", "points": 70.0},
+      {"label_ar": "لا يمارس أي لعب تخيلي على الإطلاق", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_06",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["expressive_language", "restricted_repetitive"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يكرر طفلك جملًا أو كلمات سمعها من التلفاز أو من آخرين دون أن تكون في سياق الحديث؟ (الإيكولاليا)",
+    "options": [
+      {"label_ar": "لا، لا يفعل ذلك", "points": 0.0},
+      {"label_ar": "نادرًا وبشكل طبيعي للعب أو التعلم", "points": 25.0},
+      {"label_ar": "أحيانًا ويُلاحظ أن الجمل غير مرتبطة بالسياق", "points": 60.0},
+      {"label_ar": "كثيرًا، معظم كلامه مقتبسة من الخارج وليست تواصلًا حقيقيًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_07",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["restricted_repetitive"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل تلاحظ على طفلك حركات غير معتادة مثل المشي على أطراف أصابعه باستمرار أو الدوران في دوائر بشكل متكرر؟",
+    "options": [
+      {"label_ar": "لا، مشيته وحركاته طبيعية تمامًا", "points": 0.0},
+      {"label_ar": "أحيانًا ولكنها غير مستمرة", "points": 40.0},
+      {"label_ar": "نعم، بشكل متكرر وملحوظ في كثير من الأوقات", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_08",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.5,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يقلد طفلك تصرفات الآخرين وأفعالهم أثناء اللعب (مثل تقليدك أثناء الطبخ أو محادثة الهاتف)؟",
+    "options": [
+      {"label_ar": "نعم، يقلد بشكل طبيعي وتلقائي", "points": 0.0},
+      {"label_ar": "أحيانًا ويحتاج إلى تشجيع", "points": 50.0},
+      {"label_ar": "نادرًا أو لا يقلد أفعال الآخرين إطلاقًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_09",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يستطيع طفلك إجراء محادثة ذهابًا وإيابًا (يستمع ثم يرد وهكذا) دون أن يتحول لمونولوج عن موضوعه المفضل فقط؟",
+    "options": [
+      {"label_ar": "نعم، يتبادل الحديث بشكل طبيعي ومناسب", "points": 0.0},
+      {"label_ar": "أحيانًا، يميل للحديث عن اهتماماته لكن يمكن تحويله", "points": 33.3},
+      {"label_ar": "صعب جداً، معظم محادثاته أحادية الاتجاه", "points": 66.6},
+      {"label_ar": "لا يستطيع إجراء محادثة متبادلة على الإطلاق", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_10",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يستطيع طفلك قراءة تعابير وجوه الآخرين وفهم مشاعرهم (هل هم حزينون، سعداء، غاضبون) بشكل صحيح؟",
+    "options": [
+      {"label_ar": "نعم، يقرأ المشاعر بدقة ويتعامل بحساسية", "points": 0.0},
+      {"label_ar": "أحيانًا، يفهم المشاعر الواضحة جداً فقط", "points": 40.0},
+      {"label_ar": "نادرًا، يصعب عليه فهم مشاعر الآخرين من وجوههم", "points": 70.0},
+      {"label_ar": "لا يستطيع قراءة تعابير الوجوه أو ردود الأفعال الاجتماعية إطلاقًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_11",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["pragmatic_language"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يفهم طفلك الكلام غير الحرفي مثل المجازات أو السخرية أو العبارات الدارجة (مثل: 'قلبي عليك' أو 'الجو يقتل')؟",
+    "options": [
+      {"label_ar": "نعم، يفهم السياق والمعنى المقصود بشكل جيد", "points": 0.0},
+      {"label_ar": "أحيانًا، يفهم بعضها لكن يُخطئ في تفسير بعضها الآخر", "points": 40.0},
+      {"label_ar": "نادرًا، يأخذ معظم الكلام بمعناه الحرفي فقط", "points": 75.0},
+      {"label_ar": "دائمًا يفسر الكلام بشكل حرفي تمامًا ولا يفهم الكنايات", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_t01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "كيف يتصرف الطالب في الفصل الدراسي تجاه زملائه خلال فترات اللعب الحر أو النشاط الجماعي؟",
+    "options": [
+      {"label_ar": "يتفاعل بشكل طبيعي ومناسب مع الزملاء", "points": 0.0},
+      {"label_ar": "يُشارك أحيانًا لكنه يفضل اللعب بجانب الآخرين لا معهم", "points": 40.0},
+      {"label_ar": "يعزل نفسه تمامًا ويتجنب التفاعل مع جميع الزملاء", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_t02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["restricted_repetitive"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "teacher",
+    "type": "likert_1_5",
+    "label_ar": "يُلاحظ على الطالب سلوكيات متكررة أو نمطية في الفصل (مثل ترتيب الأدوات، هز الجسم، أو تكرار أصوات بعينها).",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_s01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم الانتباه المشترك: هل يشارك الطفل الأخصائي الانتباه نحو أشياء في الغرفة؟",
+    "options": [
+      {"label_ar": "ضمن المستوى الطبيعي تمامًا (5/5)", "points": 0.0},
+      {"label_ar": "خفيف الضعف، يحدث أحيانًا (4/5)", "points": 25.0},
+      {"label_ar": "متوسط الضعف، بحاجة إلى تشجيع (3/5)", "points": 50.0},
+      {"label_ar": "ضعيف بشكل واضح، نادرًا ما يحدث (2/5)", "points": 75.0},
+      {"label_ar": "غائب تمامًا خلال الجلسة (1/5)", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_autism_s02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["social_communication"],
+    "specialty_tags": ["autism"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم اللعب التخيلي والرمزي: هل يمارس الطفل لعبًا تمثيليًا تلقائيًا أو بتوجيه من الأخصائي؟",
+    "options": [
+      {"label_ar": "يمارس اللعب التخيلي بشكل طبيعي ومتنوع (5/5)", "points": 0.0},
+      {"label_ar": "يُمارسه بشكل محدود أو بتوجيه فقط (4/5)", "points": 25.0},
+      {"label_ar": "يميل لتكرار نفس السيناريو بشكل نمطي (3/5)", "points": 50.0},
+      {"label_ar": "لعبه وظيفي وآلي فقط دون تخيل (2/5)", "points": 75.0},
+      {"label_ar": "لا يوجد أي لعب تخيلي على الإطلاق (1/5)", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["hyperactivity"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "likert_1_5",
+    "label_ar": "يجد طفلي صعوبة بالغة في البقاء جالسًا لوقت كافٍ ويبدو دائم الحركة والتململ حتى في المواقف الهادئة.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["impulsivity"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "likert_1_5",
+    "label_ar": "يقاطع طفلي الآخرين أثناء حديثهم أو يُجيب على الأسئلة قبل اكتمالها دون انتظار دوره.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_03",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["attention"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يُكمل طفلك المهام والواجبات التي يبدأها أم يتخلى عنها في منتصفها وينتقل لشيء آخر؟",
+    "options": [
+      {"label_ar": "يُكمل المهام عادةً دون مشكلة", "points": 0.0},
+      {"label_ar": "يحتاج إلى تذكير وتشجيع لإكمال المهام", "points": 40.0},
+      {"label_ar": "يتخلى عن معظم المهام قبل اكتمالها بسبب التشتت", "points": 75.0},
+      {"label_ar": "نادرًا ما يُكمل أي مهمة بدأها", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_04",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["executive_function"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "likert_1_5",
+    "label_ar": "ينسى طفلي التعليمات التي أعطيتها له منذ لحظات قليلة، أو ينسى ما أُرسل لإحضاره.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_05",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["executive_function"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "likert_1_5",
+    "label_ar": "يفقد طفلي أدواته وأغراضه الشخصية باستمرار (مثل: الحقيبة، القلم، الواجب، المفاتيح).",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_06",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["impulsivity"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يصعب على طفلك انتظار دوره في الألعاب أو الطوابير دون تدخل أو مقاطعة؟",
+    "options": [
+      {"label_ar": "لا، ينتظر دوره بصبر وبشكل طبيعي", "points": 0.0},
+      {"label_ar": "أحيانًا يصعب عليه لكن يمكن تهدئته", "points": 40.0},
+      {"label_ar": "دائمًا يجد صعوبة شديدة في الانتظار ويتصرف بشكل اندفاعي", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_t01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["impulsivity"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "likert_1_5",
+    "label_ar": "يُقاطع الطالب المعلم أو زملاءه بشكل متكرر، أو يتكلم في غير دوره داخل الفصل.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_t02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["hyperactivity"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "likert_1_5",
+    "label_ar": "يغادر الطالب مقعده بشكل متكرر خلال وقت الدرس دون إذن أو ضرورة واضحة.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_t03",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["executive_function"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "كيف يتعامل الطالب مع الانتقال من نشاط دراسي إلى آخر (مثل: من الفسحة إلى الدرس)؟",
+    "options": [
+      {"label_ar": "ينتقل بسهولة وينظم نفسه بسرعة", "points": 0.0},
+      {"label_ar": "يحتاج إلى بعض الوقت والتذكير ثم يستقر", "points": 40.0},
+      {"label_ar": "يجد صعوبة بالغة في الانتقال ويستغرق وقتًا طويلاً جداً للتركيز من جديد", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_adhd_s01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["attention"],
+    "specialty_tags": ["adhd"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم الانتباه المستمر خلال الجلسة: هل يستطيع الطفل إتمام نشاط منظم لمدة 5 دقائق على الأقل؟",
+    "options": [
+      {"label_ar": "ينتبه ويُكمل الأنشطة بشكل طبيعي (5/5)", "points": 0.0},
+      {"label_ar": "انتباه جيد مع تشتت بسيط يُمكن التغلب عليه (4/5)", "points": 25.0},
+      {"label_ar": "انتباه متوسط، يتشتت بانتظام ويحتاج إعادة توجيه (3/5)", "points": 50.0},
+      {"label_ar": "انتباه ضعيف، صعوبة في إتمام أي نشاط (2/5)", "points": 75.0},
+      {"label_ar": "لا يتمكن من الجلوس أو التركيز لأي مدة (1/5)", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["articulation"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل كلام طفلك مفهوم لأشخاص من خارج العائلة المقربة (مثل المعلم أو الجيران)؟",
+    "options": [
+      {"label_ar": "نعم، مفهوم تمامًا في معظم الأوقات", "points": 0.0},
+      {"label_ar": "مفهوم في معظم الأحيان مع بعض صعوبات في أصوات بعينها", "points": 33.3},
+      {"label_ar": "يصعب فهمه كثيرًا ويحتاج إلى تفسير مستمر من أهله", "points": 66.6},
+      {"label_ar": "غير مفهوم إطلاقًا ويعتمد على الإشارة أو الأهل للترجمة", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_02",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["articulation"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل تلاحظ على كلام طفلك أي من هذه الظواهر: تكرار مقاطع الكلام (لل-لا)، أو توقفات مفاجئة، أو مطّ الأصوات؟",
+    "options": [
+      {"label_ar": "لا، كلامه يتدفق بسلاسة وطبيعية", "points": 0.0},
+      {"label_ar": "أحيانًا وعند التعب أو الإثارة فقط", "points": 30.0},
+      {"label_ar": "نعم، بشكل ملحوظ في كثير من الأوقات يعيق تدفق الكلام", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_03",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["pragmatic_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يستطيع طفلك البدء بمحادثة مع أقرانه والحفاظ على موضوع حديث مناسب للموقف؟",
+    "options": [
+      {"label_ar": "نعم، يُحادث بشكل طبيعي ومناسب للسياق", "points": 0.0},
+      {"label_ar": "أحيانًا، يبدأ المحادثة ولكن يصعب عليه الحفاظ عليها", "points": 40.0},
+      {"label_ar": "نادرًا، يجد صعوبة في بدء المحادثة أو الحفاظ على موضوعها", "points": 75.0},
+      {"label_ar": "لا يستطيع إجراء محادثة مناسبة اجتماعيًا تقريبًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_04",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["expressive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يستطيع طفلك إعادة رواية أحداث يوم مدرسي أو قصة سمعها بشكل منظم وذي معنى؟",
+    "options": [
+      {"label_ar": "نعم، يروي بتسلسل واضح وتفاصيل مناسبة", "points": 0.0},
+      {"label_ar": "يروي الأحداث الكبرى فقط بدون تسلسل منطقي", "points": 50.0},
+      {"label_ar": "يجد صعوبة كبيرة في ترتيب وسرد الأحداث", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_05",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["receptive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل ينفذ طفلك تعليمات من خطوتين أو أكثر بشكل صحيح (مثل: 'اغسل يديك ثم تعال للمائدة')؟",
+    "options": [
+      {"label_ar": "نعم، ينفذ التعليمات المتعددة الخطوات بسهولة", "points": 0.0},
+      {"label_ar": "ينفذ الخطوة الأولى فقط أو يحتاج تكرار كل خطوة على حدة", "points": 50.0},
+      {"label_ar": "لا يستطيع تنفيذ أكثر من تعليمة واحدة بسيطة في آنٍ واحد", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_t01",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["expressive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "كيف تصف مستوى المشاركة الشفهية للطالب في الدروس مقارنةً بزملائه؟",
+    "options": [
+      {"label_ar": "يشارك بانتظام ويُعبر عن أفكاره بوضوح", "points": 0.0},
+      {"label_ar": "يُشارك أحيانًا وإجاباته محدودة", "points": 50.0},
+      {"label_ar": "يتجنب المشاركة الشفهية أو يعاني من صعوبة في التعبير اللفظي", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_t02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["receptive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "هل يفهم الطالب شرح المعلم والتعليمات الصفية بشكل كافٍ دون الحاجة لإعادة شرح فردي متكرر؟",
+    "options": [
+      {"label_ar": "نعم، يفهم تعليمات الصف بشكل طبيعي", "points": 0.0},
+      {"label_ar": "يحتاج أحيانًا إلى إعادة شرح بسيطة", "points": 40.0},
+      {"label_ar": "يحتاج دائمًا إلى شرح فردي ومبسط جداً ليفهم التعليمات", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_s01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["expressive_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم عينة اللغة التعبيرية: ما تقديرك لجودة ومستوى لغة الطفل التعبيرية خلال الجلسة؟",
+    "options": [
+      {"label_ar": "ضمن المستوى الطبيعي لعمره تمامًا (5/5)", "points": 0.0},
+      {"label_ar": "خفيف التأخر، مفردات ومركبات جملة أقل قليلاً من المتوقع (4/5)", "points": 25.0},
+      {"label_ar": "تأخر متوسط واضح في المفردات والبنية اللغوية (3/5)", "points": 50.0},
+      {"label_ar": "تأخر لغوي شديد، لغته أصغر بكثير من عمره الزمني (2/5)", "points": 75.0},
+      {"label_ar": "غياب شبه تام للغة التعبيرية الوظيفية (1/5)", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_s02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["articulation"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم النطق ومخارج الحروف: ما مستوى وضوح نطق الطفل خلال الجلسة؟",
+    "options": [
+      {"label_ar": "نطق واضح ومناسب لعمره تمامًا (5/5)", "points": 0.0},
+      {"label_ar": "أخطاء نطقية بسيطة ومتوقعة للعمر (4/5)", "points": 25.0},
+      {"label_ar": "أخطاء نطقية واضحة تُعيق الفهم أحيانًا (3/5)", "points": 50.0},
+      {"label_ar": "أخطاء نطقية متعددة تُعيق الفهم في كثير من الأحيان (2/5)", "points": 75.0},
+      {"label_ar": "كلام شبه غير مفهوم بسبب أخطاء النطق الشديدة (1/5)", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_speech_s03",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["pragmatic_language"],
+    "specialty_tags": ["speech_language"],
+    "age_bands": ["6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم اللغة البراغماتية: هل يستخدم الطفل اللغة بشكل اجتماعي مناسب خلال الجلسة؟",
+    "options": [
+      {"label_ar": "استخدام لغوي اجتماعي مناسب تمامًا (5/5)", "points": 0.0},
+      {"label_ar": "صعوبات بسيطة في التناوب أو السياق الاجتماعي (4/5)", "points": 25.0},
+      {"label_ar": "صعوبات واضحة في تكييف الكلام للموقف الاجتماعي (3/5)", "points": 50.0},
+      {"label_ar": "صعوبات شديدة، الكلام غير مناسب للسياق في معظم الأحيان (2/5)", "points": 75.0},
+      {"label_ar": "غياب شبه تام للوعي الاجتماعي في استخدام اللغة (1/5)", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_01",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يرفض طفلك تناول أطعمة معينة بسبب ملمسها أو قوامها (مثل رفض الأكل الرطب أو المهروس)؟",
+    "options": [
+      {"label_ar": "لا، يأكل بشكل طبيعي ومتنوع", "points": 0.0},
+      {"label_ar": "لديه بعض التفضيلات ولكن يُقبل على البقية", "points": 40.0},
+      {"label_ar": "نعم، يرفض فئات كاملة من الأطعمة بسبب ملمسها أو قوامها", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل ينزعج طفلك بشدة من أصوات يعتبرها معظم الأطفال عادية (مثل صوت الخلاط، صوت التصفيق، أو أصوات الحفلات)؟",
+    "options": [
+      {"label_ar": "لا، يتعامل مع الأصوات العادية بشكل طبيعي", "points": 0.0},
+      {"label_ar": "أحيانًا يبدو متأثرًا ببعض الأصوات العالية", "points": 33.3},
+      {"label_ar": "غالبًا، يُغطي أذنيه أو يصرخ أو يهرب من أصوات معتادة", "points": 75.0},
+      {"label_ar": "دائمًا، أي صوت متوسط أو عالٍ يُسبب له ضائقة شديدة", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_03",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.0,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "على النقيض، هل لا يلتفت طفلك أحيانًا لأصوات عالية جداً أو يبدو كأنه لا يسمعها؟",
+    "options": [
+      {"label_ar": "لا، يستجيب للأصوات بشكل طبيعي تمامًا", "points": 0.0},
+      {"label_ar": "أحيانًا، لا سيما عند انشغاله بشيء ما", "points": 40.0},
+      {"label_ar": "نعم، بشكل ملحوظ يجعل سمعه موضع تساؤل", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_04",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يُظهر طفلك ردود فعل مبالغة تجاه اللمس (مثل: رفض قص الشعر أو الأظافر، رفض ملابس معينة بسبب ملمسها أو خيوطها)؟",
+    "options": [
+      {"label_ar": "لا، يتحمل اللمس والملبس بشكل طبيعي", "points": 0.0},
+      {"label_ar": "بعض التفضيلات في الملبس لكن يمكن التعامل معها", "points": 33.3},
+      {"label_ar": "ردود فعل واضحة ومتكررة تجاه ملمس معين تعيق الحياة اليومية", "points": 75.0},
+      {"label_ar": "ردود فعل شديدة جداً عند أي لمس أو قص أو ارتداء ملبس جديد", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_05",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل ينزعج طفلك من الأضواء الساطعة أو الوميض (مثل الشمس المباشرة، الأضواء الفلورية، أو شاشات العرض)؟",
+    "options": [
+      {"label_ar": "لا، لا يُبدي أي حساسية للضوء", "points": 0.0},
+      {"label_ar": "أحيانًا، يطلب تخفيف الإضاءة أو يُغمض عينيه", "points": 50.0},
+      {"label_ar": "دائمًا، الحساسية للضوء تؤثر على يومه بشكل ملحوظ", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_06",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["vestibular"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يبحث طفلك بنشاط وبشكل مفرط عن الدوران أو الأرجحة أو الحركة السريعة؟ (يدور لفترات طويلة جداً دون دوخة)",
+    "options": [
+      {"label_ar": "لا، يتمتع بالحركة الطبيعية دون إفراط", "points": 0.0},
+      {"label_ar": "أحيانًا، يُحب الأرجحة لكن يتوقف عند الطلب", "points": 33.3},
+      {"label_ar": "كثيرًا، يبحث عن الدوران لفترات مطوّلة بطريقة غير اعتيادية", "points": 75.0},
+      {"label_ar": "دائمًا، الدوران والحركة الشديدة هاجس مستمر يصعب إيقافه", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_07",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["vestibular"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "على العكس، هل يخاف طفلك بشكل مبالغ فيه من الأرجوحة أو السلالم أو أي حركة تُبعده عن الأرض؟",
+    "options": [
+      {"label_ar": "لا، لديه جرأة طبيعية للحركة والارتفاع", "points": 0.0},
+      {"label_ar": "يُبدي قلقًا بسيطًا يتجاوزه عادةً", "points": 40.0},
+      {"label_ar": "خوف شديد ومستمر من الحركة يُقيّد مشاركته في الألعاب الطبيعية", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_08",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["proprioceptive"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يصطدم طفلك بالأثاث أو الجدران أو الأشخاص بشكل متكرر، أو يميل لإعطاء أحضان شديدة الضغط بشكل غير معتاد؟",
+    "options": [
+      {"label_ar": "لا، حركته منسجمة ووعيه الجسدي طبيعي", "points": 0.0},
+      {"label_ar": "أحيانًا، مُفرط في الحركة لكن ضمن حدود طبيعية للعمر", "points": 33.3},
+      {"label_ar": "كثيرًا، يصطدم بالأشياء ويبحث عن الضغط الجسدي الشديد بشكل ملفت", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_09",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.0,
+    "domain_tags": ["proprioceptive"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يُلاحظ على طفلك ارتخاء في العضلات، ضعف في الإمساك بالأشياء، أو كثرة السقوط أثناء الأنشطة العادية؟",
+    "options": [
+      {"label_ar": "لا، توازنه وقوته الجسدية طبيعية", "points": 0.0},
+      {"label_ar": "أحيانًا، أكثر كلوشة من أقرانه قليلاً", "points": 40.0},
+      {"label_ar": "نعم، يسقط ويرتطم بشكل متكرر يثير القلق", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_10",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يبدو أن طفلك لا يُحس بالألم كما ينبغي؟ (مثل: يجرح نفسه ويستمر في اللعب دون بكاء)",
+    "options": [
+      {"label_ar": "لا، يتفاعل مع الألم بشكل طبيعي لعمره", "points": 0.0},
+      {"label_ar": "أحيانًا، استجابته للألم أقل قليلاً من المعتاد", "points": 50.0},
+      {"label_ar": "نعم، يبدو لديه انخفاض واضح جداً في حساسية الألم", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_sensory_11",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["sensory_reactivity"],
+    "specialty_tags": ["sensory_processing"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يجد طفلك صعوبة في الإحساس باحتياجاته الداخلية (مثل: لا يشعر بالجوع أو العطش إلا متأخرًا، أو تأخر في التحكم بالمثانة)؟",
+    "options": [
+      {"label_ar": "لا، يُعبر عن احتياجاته الجسدية في الوقت المناسب", "points": 0.0},
+      {"label_ar": "أحيانًا، ينسى أو يتأخر في التعبير عن احتياجاته", "points": 50.0},
+      {"label_ar": "نعم، صعوبة ملحوظة في التعرف على احتياجاته الجسدية", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "هل يعكس الطالب الحروف أو الأرقام عند الكتابة بشكل مستمر (مثل كتابة 'ب' معكوسة، أو '3' بعكس اتجاهها)؟",
+    "options": [
+      {"label_ar": "لا يحدث ذلك أو نادرًا وطبيعي للعمر", "points": 0.0},
+      {"label_ar": "يحدث بانتظام ويستلزم تصحيحًا مستمرًا", "points": 60.0},
+      {"label_ar": "يحدث كثيرًا ومستمر رغم التدريب المكثف", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يستطيع طفلك فك رموز الكلمات والقراءة بصوت عالٍ (تهجئة كلمة جديدة حرفًا حرفًا) بشكل مناسب لصفه الدراسي؟",
+    "options": [
+      {"label_ar": "نعم، يقرأ بمستوى مناسب لعمره بدون صعوبة", "points": 0.0},
+      {"label_ar": "أحيانًا، يتعثر في بعض الكلمات ولكن يتعامل مع البقية", "points": 40.0},
+      {"label_ar": "يجد صعوبة كبيرة في تهجئة أغلب الكلمات حتى البسيطة", "points": 75.0},
+      {"label_ar": "لا يستطيع قراءة كلمات بسيطة من المستوى المتوقع لصفه", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_03",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يستطيع طفلك فهم ما قرأه والإجابة على أسئلة بسيطة عن موضوع النص بعد قراءته؟",
+    "options": [
+      {"label_ar": "نعم، يفهم النصوص ويجيب على الأسئلة بشكل جيد", "points": 0.0},
+      {"label_ar": "يفهم بعض النصوص البسيطة فقط", "points": 50.0},
+      {"label_ar": "يجد صعوبة كبيرة في استيعاب ما يقرأه", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_04",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "كيف تصف جودة خط طفلك وكتابته اليدوية مقارنةً بزملائه في نفس الصف؟",
+    "options": [
+      {"label_ar": "خطه واضح ومقروء بشكل طبيعي لعمره", "points": 0.0},
+      {"label_ar": "خطه صعب القراءة أحيانًا لكن يمكن فهمه", "points": 40.0},
+      {"label_ar": "خطه صعب القراءة دائمًا ويعاني من صعوبة ملحوظة في الكتابة", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_05",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.0,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يواجه طفلك صعوبة في فهم مفاهيم الأعداد والكميات الأساسية (مثل: ترتيب الأرقام، الأكثر والأقل، التحليل العددي)؟",
+    "options": [
+      {"label_ar": "لا، المفاهيم العددية واضحة له بشكل مناسب لعمره", "points": 0.0},
+      {"label_ar": "يجد صعوبة في بعض المفاهيم لكن ليس في الكل", "points": 50.0},
+      {"label_ar": "يجد صعوبة كبيرة في أغلب المفاهيم الرياضية الأساسية", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_06",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["executive_function"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يجد طفلك صعوبة في تذكر التسلسلات والخطوات الإجرائية (مثل ترتيب أيام الأسبوع، خطوات حل مسألة، أو قواعد لعبة)؟",
+    "options": [
+      {"label_ar": "لا، ذاكرته التسلسلية جيدة لعمره", "points": 0.0},
+      {"label_ar": "يحتاج إلى بعض التكرار والتذكير ثم يتقن", "points": 40.0},
+      {"label_ar": "صعوبة مستمرة في تذكر الخطوات والتسلسلات رغم التكرار", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_t01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "كيف تقيّم أداء الطالب في مادة القراءة والكتابة (اللغة العربية أو اللغة الأجنبية) مقارنةً بأقرانه؟",
+    "options": [
+      {"label_ar": "ضمن المستوى الطبيعي أو أعلى", "points": 0.0},
+      {"label_ar": "أقل من المستوى بشكل ملحوظ يستلزم دعمًا إضافيًا", "points": 60.0},
+      {"label_ar": "أقل بكثير، يحتاج خطة تعليمية فردية مكثفة", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_t02",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "كيف تقيّم أداء الطالب في مادة الرياضيات مقارنةً بأقرانه في نفس الصف؟",
+    "options": [
+      {"label_ar": "ضمن المستوى الطبيعي أو أعلى", "points": 0.0},
+      {"label_ar": "أقل من المستوى ويحتاج إلى دعم إضافي", "points": 60.0},
+      {"label_ar": "أقل بكثير ويعاني من صعوبة شديدة في الأساسيات", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_t03",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "هل الطالب قادر على كتابة جمل وفقرات قصيرة بشكل مستقل بمستوى مقبول لصفه الدراسي؟",
+    "options": [
+      {"label_ar": "نعم، كتابته مستقلة ومناسبة لعمره", "points": 0.0},
+      {"label_ar": "يحتاج مساعدة كبيرة للكتابة المستقلة", "points": 60.0},
+      {"label_ar": "لا يستطيع الكتابة المستقلة بشكل يكاد يُذكر", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_learning_s01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["academic_skills"],
+    "specialty_tags": ["learning_disabilities"],
+    "age_bands": ["6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم القراءة والتحليل الصوتي: ما مستوى أداء الطفل في مهام القراءة وفك الرموز مقارنةً بالمعيار لعمره؟",
+    "options": [
+      {"label_ar": "أداء ضمن المعيار الطبيعي لعمره (5/5)", "points": 0.0},
+      {"label_ar": "أداء أقل من المعيار بنحو نصف انحراف معياري (4/5)", "points": 25.0},
+      {"label_ar": "أداء أقل من المعيار بانحراف معياري واحد (3/5)", "points": 50.0},
+      {"label_ar": "أداء أقل من المعيار بأكثر من انحراف معياري واحد (2/5)", "points": 75.0},
+      {"label_ar": "أداء في أدنى المستويات (%ile < 5) يُعبر عن صعوبة تعلم شديدة (1/5)", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["emotional_regulation"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "likert_1_5",
+    "label_ar": "يستغرق طفلي وقتًا طويلاً جداً (أكثر من 20 دقيقة) للهدوء بمفرده بعد نوبة الغضب أو البكاء الشديد.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_02",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["externalizing"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يصدر من طفلك سلوكيات عدوانية جسدية تجاه الآخرين أو الأشياء (مثل الضرب، العض، الرمي، التخريب) عند الإحباط؟",
+    "options": [
+      {"label_ar": "لا، لا يلجأ للعدوان الجسدي", "points": 0.0},
+      {"label_ar": "أحيانًا وعند الضغط الشديد جداً", "points": 33.3},
+      {"label_ar": "بشكل متكرر يُسبب قلقًا حقيقيًا", "points": 66.6},
+      {"label_ar": "بشكل يومي تقريبًا ويُشكل خطرًا على سلامته أو سلامة الآخرين", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_03",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["internalizing"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل يُبدي طفلك قلقًا أو خوفًا مبالغًا فيه من مواقف يومية عادية (مثل: الذهاب للمدرسة، التحدث مع الغرباء، الأماكن الجديدة)؟",
+    "options": [
+      {"label_ar": "لا، يتعامل مع المواقف الجديدة بجرأة طبيعية", "points": 0.0},
+      {"label_ar": "قلق بسيط يختفي بعد التدريج والتشجيع", "points": 33.3},
+      {"label_ar": "قلق واضح يعيق قدرته على المشاركة في أنشطة طبيعية", "points": 66.6},
+      {"label_ar": "قلق شديد جداً يُسبب له معاناة يومية ويُقيّد حياته بشكل كبير", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_04",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["internalizing"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["6-18"],
+    "informant": "parent",
+    "type": "single_select",
+    "label_ar": "هل لاحظت على طفلك في الفترة الأخيرة حزنًا مستمرًا، أو فقدانًا للاهتمام بأشياء كان يُحبها، أو انسحابًا اجتماعيًا؟",
+    "options": [
+      {"label_ar": "لا، مزاجه ومشاركته طبيعيان بشكل عام", "points": 0.0},
+      {"label_ar": "أحيانًا ولفترات قصيرة يمكن تفسيرها", "points": 33.3},
+      {"label_ar": "نعم، لاحظت تغيرًا واضحًا في مزاجه واهتمامه يستمر لأسابيع", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_05",
+    "is_core": false,
+    "priority": 1,
+    "weight": 2.0,
+    "domain_tags": ["internalizing"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[تقييم سريري متخصص] هل لُوحظ أي سلوك إيذاء الذات أو أفكار سلبية حول الذات لدى المراهق/الطفل؟",
+    "options": [
+      {"label_ar": "لا يوجد أي مؤشر على ذلك", "points": 0.0},
+      {"label_ar": "مؤشرات خفيفة تستوجب المتابعة (كلام سلبي عن الذات)", "points": 50.0},
+      {"label_ar": "مؤشرات واضحة تستوجب تقييمًا نفسيًا عاجلاً", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_t01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["externalizing"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "هل يُبدي الطالب سلوكيات عدوانية (لفظية أو جسدية) تجاه الزملاء أو الأدوات أو المعلم داخل الفصل؟",
+    "options": [
+      {"label_ar": "لا، سلوكه هادئ ومناسب بشكل عام", "points": 0.0},
+      {"label_ar": "أحيانًا وعند استفزازه بشكل واضح", "points": 40.0},
+      {"label_ar": "بشكل متكرر يُعيق سير الفصل ويحتاج إلى تدخل مستمر", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_t02",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["internalizing"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "likert_1_5",
+    "label_ar": "يُلاحظ على الطالب توتر أو قلق واضح (يرفض المشاركة، يبكي بسهولة، يبدو خائفًا من الأداء) داخل الفصل.",
+    "options": [
+      {"label_ar": "لا ينطبق أبدًا", "points": 0.0},
+      {"label_ar": "نادرًا ما ينطبق", "points": 25.0},
+      {"label_ar": "ينطبق أحيانًا", "points": 50.0},
+      {"label_ar": "ينطبق كثيرًا", "points": 75.0},
+      {"label_ar": "ينطبق دائمًا", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_t03",
+    "is_core": false,
+    "priority": 2,
+    "weight": 1.0,
+    "domain_tags": ["internalizing"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["6-18"],
+    "informant": "teacher",
+    "type": "single_select",
+    "label_ar": "هل لاحظت على الطالب في الفترة الأخيرة انسحابًا اجتماعيًا، أو تراجعًا في الاهتمام بالأنشطة المدرسية كان يُشارك فيها سابقًا؟",
+    "options": [
+      {"label_ar": "لا، مشاركته ومزاجه المدرسي طبيعيان", "points": 0.0},
+      {"label_ar": "أحيانًا ولفترات محدودة يمكن تفسيرها", "points": 40.0},
+      {"label_ar": "نعم، تغير واضح ومستمر في انخراطه الاجتماعي والدراسي", "points": 100.0}
+    ]
+  },
+  {
+    "id": "q_behavior_s01",
+    "is_core": false,
+    "priority": 1,
+    "weight": 1.5,
+    "domain_tags": ["emotional_regulation"],
+    "specialty_tags": ["behavior_emotional"],
+    "age_bands": ["0-6", "6-18"],
+    "informant": "specialist",
+    "type": "single_select",
+    "label_ar": "[ملاحظة سريرية] تقييم التنظيم الانفعالي خلال الجلسة: كيف تقيّم قدرة الطفل على ضبط ردود فعله العاطفية؟",
+    "options": [
+      {"label_ar": "تنظيم انفعالي ناضج ومناسب لعمره (5/5)", "points": 0.0},
+      {"label_ar": "بعض الصعوبة في المواقف الضاغطة لكن يتعافى بسرعة (4/5)", "points": 25.0},
+      {"label_ar": "صعوبة واضحة في ضبط ردود الفعل، يحتاج توجيهًا متكررًا (3/5)", "points": 50.0},
+      {"label_ar": "ضعف شديد في التنظيم الانفعالي، ردود فعل مبالغ فيها (2/5)", "points": 75.0},
+      {"label_ar": "غياب شبه تام للتنظيم الذاتي الانفعالي (1/5)", "points": 100.0}
+    ]
+  }
+]
