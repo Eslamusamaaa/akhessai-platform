@@ -12,6 +12,7 @@ from config import settings
 _st_model = None
 _st_checked = False
 _st_available = False
+_DOC_EMBEDDINGS_CACHE: Dict[str, Any] = {}
 
 
 def _try_load_st():
@@ -1444,8 +1445,6 @@ class VectorStoreClient:
                 print(f"[RAG] Qdrant search failed → in-memory: {e}")
 
         return self._search_in_memory(specialties, domains, age_band, query, limit)
-
-_DOC_EMBEDDINGS_CACHE: Dict[str, np.ndarray] = {}
 
     def _search_in_memory(
         self,
