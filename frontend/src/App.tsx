@@ -66,36 +66,12 @@ export const App: React.FC = () => {
   const [page, setPage] = useState<"dashboard" | "assessment_flow" | "clinician_portal">("dashboard");
   const [activeSessionId, setActiveSessionId] = useState<string>("");
 
-  const handleRoleSelect = async (username: string, password: string) => {
-    setLoadingRole(username);
-    try {
-      const res = await apiFetch("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: username, password }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setToken(data.access_token);
-        setRole(data.role || username);
-        setUserEmail(data.username || username);
-        sessionStorage.setItem("token", data.access_token);
-        sessionStorage.setItem("role", data.role || username);
-        sessionStorage.setItem("userEmail", data.username || username);
-        setPage("dashboard");
-        return;
-      }
-    } catch (err) {
-      console.error("Auth login error fallback:", err);
-    } finally {
-      setLoadingRole(null);
-    }
-    // POC instant login fallback
-    const fallbackToken = "poc-token-" + username;
-    setToken(fallbackToken);
+  const handleRoleSelect = (username: string) => {
+    const tokenVal = "poc-token-" + username;
+    setToken(tokenVal);
     setRole(username);
     setUserEmail(username);
-    sessionStorage.setItem("token", fallbackToken);
+    sessionStorage.setItem("token", tokenVal);
     sessionStorage.setItem("role", username);
     sessionStorage.setItem("userEmail", username);
     setPage("dashboard");
@@ -140,7 +116,7 @@ export const App: React.FC = () => {
               return (
                 <button
                   key={r.username}
-                  onClick={() => handleRoleSelect(r.username, r.password)}
+                  onClick={() => handleRoleSelect(r.username)}
                   disabled={loadingRole !== null}
                   className={`
                     relative flex items-center gap-4 p-5 rounded-2xl border-2 bg-white text-right
