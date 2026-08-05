@@ -129,7 +129,20 @@ export const AssessmentFlow: React.FC<AssessmentFlowProps> = ({
       });
 
       if (res.ok) {
-        await fetchSessionAndQuestion();
+        const data = await res.json();
+        if (data.finished) {
+          setFinishedFlow(true);
+          setCurrentQuestion(null);
+        } else if (data.next_question) {
+          setCurrentQuestion(data.next_question);
+          setSelectedValue([]);
+          setAnsweredCount(data.responses_count ?? (answeredCount + 1));
+          if (data.current_informant && session) {
+            setSession({ ...session, current_informant: data.current_informant, status: data.session_status });
+          }
+        } else {
+          await fetchSessionAndQuestion();
+        }
       } else {
         alert("حدث خطأ أثناء حفظ الإجابة.");
       }
