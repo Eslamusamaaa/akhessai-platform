@@ -1445,6 +1445,8 @@ class VectorStoreClient:
 
         return self._search_in_memory(specialties, domains, age_band, query, limit)
 
+_DOC_EMBEDDINGS_CACHE: Dict[str, np.ndarray] = {}
+
     def _search_in_memory(
         self,
         specialties: List[str],
@@ -1468,9 +1470,12 @@ class VectorStoreClient:
             if domains and doc["domain_tag"] not in domains:
                 continue
 
-            d_vec = np.array(
-                get_text_embedding(f"{doc['title']} {doc['content']}"), dtype=float
-            )
+            doc_id = doc["id"]
+            if doc_id not in _DOC_EMBEDDINGS_CACHE:
+                _DOC_EMBEDDINGS_CACHE[doc_id] = np.array(
+                    get_text_embedding(f"{doc['title']} {doc['content']}"), dtype=float
+                )
+            d_vec = _DOC_EMBEDDINGS_CACHE[doc_id]
             score = float(np.dot(q_vec, d_vec))
             if doc["category"] in ("goals", "strategy"):
                 score += 0.05          # small actionability boost
