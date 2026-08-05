@@ -192,10 +192,10 @@ def startup_event():
         if db.query(models.User).count() == 0:
             print("[Startup] Database is empty. Seeding demo credentials...")
             demo_users = [
-                models.User(username="admin",      email="admin@musanad.sa",      password_hash=security.hash_password("admin123"),      role="admin"),
-                models.User(username="specialist", email="specialist@musanad.sa", password_hash=security.hash_password("specialist123"), role="specialist"),
-                models.User(username="parent",     email="parent@musanad.sa",     password_hash=security.hash_password("parent123"),     role="parent"),
-                models.User(username="teacher",    email="teacher@musanad.sa",    password_hash=security.hash_password("teacher123"),    role="teacher"),
+                models.User(username="admin",      email="admin@akhessai.sa",      password_hash=security.hash_password("admin123"),      role="admin"),
+                models.User(username="specialist", email="specialist@akhessai.sa", password_hash=security.hash_password("specialist123"), role="specialist"),
+                models.User(username="parent",     email="parent@akhessai.sa",     password_hash=security.hash_password("parent123"),     role="parent"),
+                models.User(username="teacher",    email="teacher@akhessai.sa",    password_hash=security.hash_password("teacher123"),    role="teacher"),
             ]
             db.add_all(demo_users)
             db.commit()
@@ -203,10 +203,10 @@ def startup_event():
         else:
             # Backfill emails for existing users that have none
             email_map = {
-                "admin":      "admin@musanad.sa",
-                "specialist": "specialist@musanad.sa",
-                "parent":     "parent@musanad.sa",
-                "teacher":    "teacher@musanad.sa",
+                "admin":      "admin@akhessai.sa",
+                "specialist": "specialist@akhessai.sa",
+                "parent":     "parent@akhessai.sa",
+                "teacher":    "teacher@akhessai.sa",
             }
             for uname, uemail in email_map.items():
                 u = db.query(models.User).filter(models.User.username == uname).first()

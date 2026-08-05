@@ -1,38 +1,49 @@
-# Security Specification (المعايير الأمنية وحماية الخصوصية)
+# Security Specification
 
-This document highlights the security measures incorporated into this Proof of Concept (POC) and identifies components that must be reinforced prior to a production deployment.
+This document describes the security measures implemented in this Proof of Concept (POC) and identifies the components that must be hardened before any production deployment.
 
 ---
 
-## 1. Implemented Security Controls (المعايير المطبقة حاليًا)
+## 1. Implemented Security Controls
 
-### Column-Level Encryption at Rest (تشفير البيانات الحساسة)
-- Direct child identifiers (Name, Date of Birth, School, Grade, Parent Contact) and specialist clinical notes are encrypted using **Fernet Symmetric Cryptography** before database write, and decrypted dynamically via class property getters.
-- Encryptions keys are loaded from system environment variables (`PHI_ENCRYPTION_KEY`), ensuring they are never hardcoded in repository sources.
+### Column-Level Encryption at Rest
+- Direct child identifiers (name, date of birth, school, grade, parent contact) and specialist clinical notes are encrypted with **Fernet symmetric cryptography** before being written to the database, and decrypted dynamically via model property getters.
+- Encryption keys are loaded from an environment variable (`PHI_ENCRYPTION_KEY`) — never hardcoded in source.
 
-### PHI Minimization & Redaction Layer (تجريد البيانات قبل إرسالها للذكاء الاصطناعي)
-- All prompts sent to the external OpenRouter API undergo automatic sanitization (`redact_phi`):
-  - Strips telephone numbers (Arabic & Western numerals).
-  - Strips email addresses and calendar date strings.
-  - Scans and replaces common Arabic name tokens with placeholders `[الطفل/الحالة]`.
-  - Maps Child database UUIDs to shortened internal references (e.g. `CHILD_a8d3e2f1`).
+### PHI Minimization & Redaction Layer
+Every prompt sent to the external OpenRouter API passes through automatic sanitization (`redact_phi`):
+- Strips telephone numbers (Arabic and Western numerals).
+- Strips email addresses and calendar date strings.
+- Scans for and replaces common Arabic first names with a placeholder token.
+- Maps child database UUIDs to shortened internal references (e.g. `CHILD_a8d3e2f1`) instead of exposing raw identifiers.
 
-### Authentication & Authorization (التحقق والترخيص)
-- Password hashing is enforced using the computationally hard **Argon2id** algorithm via `passlib`.
+### Authentication & Authorization
+- Password hashing uses the computationally hard **Argon2id** algorithm via `passlib`.
 - Endpoint security uses short-lived JSON Web Tokens (JWT) for session authentication.
-- Server-side Role-Based Access Control (RBAC) regulates endpoint access via decorators (e.g., locking AI report generation and observations to `specialist` and `admin` scopes).
+- Server-side Role-Based Access Control (RBAC) restricts endpoint access via decorators (e.g. AI report generation and clinical observations are locked to `specialist` and `admin` scopes).
 
-### Sanitized Audit Trails (سجل مراجعة أمان النظام)
-- Security audit logs are captured in a dedicated table `audit_logs` tracking system events (logins, registrations, AI generations, report approvals) without referencing any raw patient information (PHI).
+### Sanitized Audit Trails
+Security audit logs are captured in a dedicated `audit_logs` table, tracking system events (logins, registrations, AI generations, report approvals) without referencing any raw patient information (PHI).
+
+### Secret Management
+All credentials — the OpenRouter API key, JWT signing secret, Fernet encryption key, and database password — are loaded exclusively from environment variables (`.env`, gitignored). No secret has a hardcoded fallback value in source control. See [`.env.example`](.env.example) and [`backend/.env.example`](backend/.env.example) for the required variables.
 
 ---
 
-## 2. Deferred Production Hardening (الخطوات المؤجلة للإنتاج المستقبلي)
+## 2. Deferred Production Hardening
 
-| Security Aspect | Implementation status in POC | Required for Production |
+| Security Aspect | POC Implementation | Required for Production |
 |---|---|---|
-| **Compliance Certification** | None (POC Only) | Requires full HIPAA, GDPR, and regional national health commission certifications. |
-| **LLM Provider Agreement** | OpenRouter (Public endpoint) | Requires business-level BAA (Business Associate Agreement) or DPA (Data Processing Agreement) with private VPC LLM deployments. |
-| **KMS Key Management** | Environment variable (`.env`) | Must transition to key management vaults such as HashiCorp Vault, AWS KMS, or Google Cloud KMS. |
-| **File Upload Scanner** | Mocked function hook | Needs active virus scan container integration (e.g. ClamAV) and mime-type signature checks. |
-| **Database Encryption** | Column-level Fernet | Requires full Transparent Data Encryption (TDE) at the database storage engine layer. |
+| **Compliance certification** | None (POC only) | Full HIPAA, GDPR, and relevant national health authority certification. |
+| **LLM provider agreement** | OpenRouter (public endpoint) | Business-level BAA / DPA with a private VPC LLM deployment. |
+| **Key management** | Environment variables (`.env`) | Managed key vault — HashiCorp Vault, AWS KMS, or Google Cloud KMS. |
+| **File upload scanning** | Not implemented | Active virus scanning (e.g. ClamAV) and MIME-type signature checks. |
+| **Database encryption** | Column-level Fernet | Full Transparent Data Encryption (TDE) at the storage engine layer. |
+| **PHI redaction robustness** | Regex + a fixed Arabic name list | NLP-based named-entity recognition (NER) for reliable PHI detection. |
+| **Vector store scaling** | Qdrant with in-memory fallback | Dedicated, persistent, horizontally-scalable Qdrant cluster. |
+
+---
+
+## Reporting a vulnerability
+
+This is a proof-of-concept project. If you find a security issue, please open an issue on the repository rather than disclosing it publicly.

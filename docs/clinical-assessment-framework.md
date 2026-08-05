@@ -688,7 +688,7 @@ Gold-Standard Workflow
 
 Registration → Smart Screening → Parent Assessment → Teacher Assessment → Specialist Assessment → Clinical Observation → Specialized Evaluations → Standardized Testing → AI Risk Analysis → Referral Engine → Diagnostic Report → Individualized Intervention Plan → Progress Monitoring Dashboard
 
-هذا النموذج يُعد من أكثر النماذج اكتمالاً ويمكن استخدامه كأساس لمنصة تقييم وتشخيص وإدارة حالات التربية الخاصة بمستوى احترافي متقدم.
+This framework is one of the most complete models available and can serve as the foundation for a professional-grade platform for assessing, diagnosing, and managing special education cases.
 
 
 
@@ -714,29 +714,29 @@ Registration → Smart Screening → Parent Assessment → Teacher Assessment �
 
 
 
-**- هل احنا محددين عدد من حالات المرض ولا كل الحالات ؟و ايه هم ؟**
+**- Are we limiting the platform to a fixed set of conditions, or covering all of them? Which ones?**
 
-**ج/** 
+**A/**
 
-**المنصة مفتوحة لكل حالات التربية الخاصة** 
+**The platform is open to all special-education case types:**
 
-**- تأخر التخاطب**
+**- Speech and language delay**
 
-**- صعوبات التعلم**
+**- Learning disabilities**
 
-**- تعديل السلوك**
+**- Behavior modification**
 
-**- التكامل الحسي**
+**- Sensory integration**
 
-**- التأهيل**
+**- Rehabilitation**
 
-**- اضطرابات التواصل**
+**- Communication disorders**
 
-**- شاشة اختيار التخصص في onboarding لازم تكون multi-select وليست single choice — الطفل ممكن يحتاج أكثر من تخصص في نفس الوقت. فيلتر البحث هيكون تحديد أكثر من تخصص**
-
-
+**- The specialty-selection screen in onboarding must be multi-select, not single-choice — a child may need more than one specialty at once. The search filter should support selecting multiple specialties.**
 
 
 
-**- هل في تخصصات محدودة في الـ MVP (مثلاً تخاطب + سلوك فقط) ثم تتوسع؟ هذا يأثر على ترتيب الـ filters وعدد الأخصائيين في اليوم الأول**
+
+
+**- Should the MVP launch with a limited set of specialties (e.g. speech + behavior only) and expand later? This affects filter ordering and the number of specialists available on day one.**
 
