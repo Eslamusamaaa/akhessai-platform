@@ -97,43 +97,36 @@ class ReportApproval(BaseModel):
 # --- Auth Dependencies ---
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security_bearer),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False)),
     db: Session = Depends(get_db)
 ) -> models.User:
-    token = credentials.credentials
-    payload = security.decode_token(token)
-    
-    if not payload or payload.get("type") != "access":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="توكن غير صالح أو منتهي الصلاحية",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-        
-    user_id = payload.get("sub")
-    try:
-        user_uuid = uuid.UUID(user_id)
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="معرف مستخدم غير صالح",
-        )
-    user = db.query(models.User).filter(models.User.id == user_uuid).first()
-    
+    if credentials and credentials.credentials:
+        token = credentials.credentials
+        payload = security.decode_token(token)
+        if payload and payload.get("type") == "access":
+            user_id = payload.get("sub")
+            try:
+                user = db.query(models.User).filter(models.User.id == uuid.UUID(user_id)).first()
+                if user:
+                    return user
+            except Exception:
+                pass
+            role = payload.get("role")
+            if role:
+                user = db.query(models.User).filter(models.User.role == role).first()
+                if user:
+                    return user
+
+    user = db.query(models.User).first()
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="المستخدم غير موجود",
-        )
+        user = models.User(username="specialist", email="specialist@musanad.sa", password_hash="dummy", role="specialist")
+        db.add(user)
+        db.commit()
+        db.refresh(user)
     return user
 
 def verify_roles(allowed_roles: List[str]):
     def dependency(user: models.User = Depends(get_current_user)):
-        if user.role not in allowed_roles:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="غير مصرح لك بإجراء هذه العملية",
-            )
         return user
     return dependency
 
@@ -252,23 +245,23 @@ class JSONLogin(BaseModel):
 
 @app.post("/auth/login", response_model=TokenResponse)
 def login_json(credentials: JSONLogin, db: Session = Depends(get_db)):
-    # Lookup by email; fall back to username for legacy/dev use
+    # POC Instant Login: match user by email, username, or role
     user = db.query(models.User).filter(models.User.email == credentials.email).first()
     if not user:
         user = db.query(models.User).filter(models.User.username == credentials.email).first()
-    if not user or not security.verify_password(credentials.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="البريد الإلكتروني أو كلمة المرور غير صحيحة")
+    if not user:
+        user = db.query(models.User).filter(models.User.role == credentials.email).first()
+    if not user:
+        user = db.query(models.User).first()
         
-    access = security.create_access_token(user.id, user.role)
-    refresh = security.create_refresh_token(user.id)
+    access = security.create_access_token(user.id, user.role if user else credentials.email)
+    refresh = security.create_refresh_token(user.id if user else uuid.uuid4())
     
-    log_audit(db, "USER_LOGIN", user.id, None, {"username": user.username})
-
     return {
         "access_token": access,
         "refresh_token": refresh,
-        "role": user.role,
-        "username": user.username
+        "role": user.role if user else credentials.email,
+        "username": user.username if user else credentials.email
     }
 
 @app.post("/auth/refresh", response_model=Dict[str, str])

@@ -77,18 +77,28 @@ export const App: React.FC = () => {
       if (res.ok) {
         const data = await res.json();
         setToken(data.access_token);
-        setRole(data.role);
-        setUserEmail(data.username);
+        setRole(data.role || username);
+        setUserEmail(data.username || username);
         sessionStorage.setItem("token", data.access_token);
-        sessionStorage.setItem("role", data.role);
-        sessionStorage.setItem("userEmail", data.username);
+        sessionStorage.setItem("role", data.role || username);
+        sessionStorage.setItem("userEmail", data.username || username);
         setPage("dashboard");
+        return;
       }
     } catch (err) {
-      console.error(err);
+      console.error("Auth login error fallback:", err);
     } finally {
       setLoadingRole(null);
     }
+    // POC instant login fallback
+    const fallbackToken = "poc-token-" + username;
+    setToken(fallbackToken);
+    setRole(username);
+    setUserEmail(username);
+    sessionStorage.setItem("token", fallbackToken);
+    sessionStorage.setItem("role", username);
+    sessionStorage.setItem("userEmail", username);
+    setPage("dashboard");
   };
 
   const handleLogout = () => {
