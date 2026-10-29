@@ -31,7 +31,7 @@ def _try_load_st():
         dim = getter() if getter else 384
         print(f"[RAG] Semantic embedding active: {model_name} ({dim} dims)")
     except Exception as e:
-        print(f"[RAG] sentence-transformers not available → keyword fallback. ({e})")
+        print(f"[RAG] sentence-transformers not available -> keyword fallback. ({e})")
         _st_model = None
         _st_available = False
     return _st_model
@@ -1350,7 +1350,7 @@ class VectorStoreClient:
     def initialize_collection(self) -> bool:
         """Drop & recreate collection, then seed all 100 documents."""
         if not self.is_connected or not self.client:
-            print("[RAG] Qdrant not connected — skipping collection init.")
+            print("[RAG] Qdrant not connected - skipping collection init.")
             return False
         try:
             existing = [c.name for c in self.client.get_collections().collections]
@@ -1369,7 +1369,7 @@ class VectorStoreClient:
             texts = [f"{d['title']} {d['content']}" for d in SEED_DOCUMENTS]
             model = _try_load_st()
             if model:
-                print(f"[RAG] Encoding {len(texts)} documents with sentence-transformers…")
+                print(f"[RAG] Encoding {len(texts)} documents with sentence-transformers...")
                 raw = model.encode(texts, normalize_embeddings=True, show_progress_bar=True)
                 vecs = [v.tolist() for v in raw]
                 method = f"sentence-transformers ({self.vector_size} dims)"
@@ -1442,7 +1442,7 @@ class VectorStoreClient:
                     for h in hits
                 ]
             except Exception as e:
-                print(f"[RAG] Qdrant search failed → in-memory: {e}")
+                print(f"[RAG] Qdrant search failed -> in-memory: {e}")
 
         return self._search_in_memory(specialties, domains, age_band, query, limit)
 

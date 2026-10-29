@@ -300,6 +300,20 @@ Then run `python seed.py` (or just start the server on an empty database). It cr
 
 ---
 
+## Screenshots
+
+A complete case walkthrough (fictional data, local run). More images and captions in [`mostaqel/first-project`](mostaqel/first-project/README.md).
+
+| Parent registers a child | Parent questionnaire | Teacher questionnaire |
+|---|---|---|
+| ![](mostaqel/first-project/02-register-child-filled.jpg) | ![](mostaqel/first-project/05-parent-question-rating-scale.jpg) | ![](mostaqel/first-project/09-teacher-question.jpg) |
+
+| Clinical observation | Domain severity results | Priority tier and flags |
+|---|---|---|
+| ![](mostaqel/first-project/13-clinical-observation-form.jpg) | ![](mostaqel/first-project/15-results-domain-severity-scores.jpg) | ![](mostaqel/first-project/16-results-priority-tier-and-informant-gaps.jpg) |
+
+---
+
 ## API surface
 
 | Endpoint | Purpose |

@@ -317,7 +317,7 @@ def generate_report_draft(
     }
 
     if not settings.OPENROUTER_API_KEY:
-        print("[LLM] API key missing — returning fallback draft.")
+        print("[LLM] API key missing - returning fallback draft.")
         return fallback
 
     headers = {
