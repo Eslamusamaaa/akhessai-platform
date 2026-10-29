@@ -33,6 +33,7 @@ class Child(Base):
     _parent_contact = Column("parent_contact", String, nullable=True)
     
     gender = Column(String, nullable=False)  # male | female
+    created_by = Column(UUID(as_uuid=True), nullable=True)  # user who registered the child (parents only see their own)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships

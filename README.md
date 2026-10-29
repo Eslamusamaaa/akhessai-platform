@@ -286,14 +286,17 @@ python seed.py
 
 For a Vercel deployment (frontend + backend as separate projects, Postgres instead of SQLite), see [DEPLOYMENT.md](DEPLOYMENT.md).
 
-### 4. Demo credentials
+### 4. Demo accounts (local demos only)
 
-| Role | Username | Password |
-|---|---|---|
-| Parent | `parent` | `parent123` |
-| Teacher | `teacher` | `teacher123` |
-| Specialist | `specialist` | `specialist123` |
-| Admin | `admin` | `admin123` |
+There are no built-in passwords. For a local demo, set in `backend/.env`:
+
+```
+APP_ENV=development
+SEED_DEMO_USERS=true
+DEMO_PASSWORD=choose-a-12+-character-password
+```
+
+Then run `python seed.py` (or just start the server on an empty database). It creates `parent`, `teacher`, `specialist` and `admin`, all with your `DEMO_PASSWORD`. Set `VITE_DEMO_MODE=true` in the frontend to show role shortcuts that prefill the username. Never enable demo seeding on a deployment with real data.
 
 ---
 

@@ -1,3 +1,5 @@
+import os
+import sys
 from datetime import datetime, timedelta
 from database import Base, engine, SessionLocal
 import models
@@ -5,6 +7,11 @@ from security import hash_password
 from rag.pipeline import rag_client
 
 def seed_db():
+    demo_pw = os.getenv("DEMO_PASSWORD", "")
+    if len(demo_pw) < 12:
+        sys.exit("[Seed] Set DEMO_PASSWORD (12+ chars) in the environment first.")
+    if not str(engine.url).startswith("sqlite") and os.getenv("CONFIRM_DROP") != "yes":
+        sys.exit("[Seed] Refusing to DROP tables on a non-SQLite database. Set CONFIRM_DROP=yes to override.")
     print("[Seed] Dropping and recreating SQL tables...")
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
@@ -14,10 +21,7 @@ def seed_db():
         print("[Seed] Seeding users...")
         
         # Hash passwords
-        admin_pw = hash_password("admin123")
-        specialist_pw = hash_password("specialist123")
-        parent_pw = hash_password("parent123")
-        teacher_pw = hash_password("teacher123")
+        admin_pw = specialist_pw = parent_pw = teacher_pw = hash_password(demo_pw)
         
         users = [
             models.User(username="admin", password_hash=admin_pw, role="admin"),

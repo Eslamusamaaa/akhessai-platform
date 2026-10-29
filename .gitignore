@@ -32,3 +32,9 @@ Thumbs.db
 
 # ── Vercel ───────────────────────────────────────────────
 .vercel/
+
+# ── Backups / dumps (never commit data) ──
+*.bak*
+*.db.*
+*.sql
+*.dump
