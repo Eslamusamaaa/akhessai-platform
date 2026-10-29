@@ -104,7 +104,7 @@ No environment variables are required on the frontend project — all API calls 
 ## 5. Verify
 
 1. Open the frontend's production URL.
-2. Log in with a demo account (`specialist` / `specialist123`).
+2. Log in with a real account you created (see the environment-variable section above; there are no default passwords).
 3. Confirm the dashboard loads with case data — this proves the frontend → rewrite → backend → Postgres chain is wired correctly.
 4. Check **Project → Logs** on the backend Vercel project if anything fails — startup errors (bad `DATABASE_URL`, missing secrets) show up there immediately.
 
@@ -115,3 +115,20 @@ No environment variables are required on the frontend project — all API calls 
 - **Cold starts**: the first request to a cold backend instance loads the `sentence-transformers` embedding model into memory — this can take several seconds. Traffic keeps the instance warm between requests.
 - **No persistent local file storage**: everything must go through Postgres. This is already how the app is built (`DATABASE_URL` is fully configurable) — no code changes were needed beyond pointing it at Postgres instead of SQLite.
 - **Serverless Postgres connections**: use a pooled connection string (see step 0) to avoid exhausting your database's connection limit under concurrent serverless invocations.
+
+---
+
+## Required environment variables (security update)
+Set these in Vercel -> Project -> Settings -> Environment Variables before deploying the backend:
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | your Neon connection string |
+| `JWT_SECRET` | `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `PHI_ENCRYPTION_KEY` | `python -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"` |
+| `OPENROUTER_API_KEY` | from openrouter.ai |
+| `APP_ENV` | leave unset (= production) |
+
+The backend now **refuses to start** if `JWT_SECRET` or `PHI_ENCRYPTION_KEY` is missing.
+Create real users through `POST /auth/register` (parents/teachers) and create the first specialist/admin directly in the database; do **not** enable `SEED_DEMO_USERS` on a deployment with real data.
+`frontend/vercel.json` must point at the URL of *your* backend deployment; `akhessai-backend.vercel.app` in this document is only an example name and is not a live deployment.

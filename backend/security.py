@@ -1,4 +1,3 @@
-import base64
 from datetime import datetime, timedelta, timezone
 from typing import Union, Any
 import jwt
@@ -9,21 +8,8 @@ from config import settings
 # Initialize Argon2 password hashing context
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
-# Initialize Fernet symmetric encryption for PHI masking
-# Ensure key is correctly padded for Fernet (32 bytes urlsafe base64)
-try:
-    decoded_key = base64.urlsafe_b64decode(settings.PHI_ENCRYPTION_KEY)
-    if len(decoded_key) < 32:
-        # pad key to 32 bytes
-        decoded_key = decoded_key.ljust(32, b'\0')
-    elif len(decoded_key) > 32:
-        decoded_key = decoded_key[:32]
-    fernet_key = base64.urlsafe_b64encode(decoded_key)
-except Exception:
-    # fallback to a basic valid key if decode fails
-    fernet_key = base64.urlsafe_b64encode(b"static_fallback_secret_32_bytes_")
-
-fernet = Fernet(fernet_key)
+# Fernet symmetric encryption for PHI columns; the key is validated in config.py
+fernet = Fernet(settings.PHI_ENCRYPTION_KEY.encode())
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -37,10 +23,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def encrypt_phi(value: Union[str, None]) -> Union[str, None]:
     if value is None:
         return None
-    try:
-        return fernet.encrypt(value.encode()).decode()
-    except Exception:
-        return "[ENCRYPTION_ERROR]"
+    return fernet.encrypt(value.encode()).decode()
 
 def decrypt_phi(encrypted_value: Union[str, None]) -> Union[str, None]:
     if encrypted_value is None or encrypted_value.startswith("[ENCRYPTION_ERROR]"):

@@ -7,3 +7,8 @@ __pycache__/
 venv/
 migrate_to_neon.py
 
+# ── Backups / dumps (never commit data) ──
+*.bak*
+*.db.*
+*.sql
+*.dump

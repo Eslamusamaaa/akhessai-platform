@@ -1,4 +1,7 @@
 import uuid
+import time
+import secrets
+from collections import defaultdict
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 from fastapi import FastAPI, Depends, HTTPException, status, Security
@@ -12,7 +15,7 @@ from sqlalchemy import text
 from database import engine, Base, get_db, SessionLocal
 import models
 import security
-from config import settings
+from config import settings, IS_DEV
 from questions.resolver import QUESTION_BANK, get_next_question
 from rules.evaluator import evaluate_rules
 from rag.pipeline import rag_client
@@ -24,16 +27,28 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="AI-Assisted Special Education Assessment Platform (POC)",
     description="Arabic/RTL Healthcare decision support system.",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs" if IS_DEV else None,
+    redoc_url=None,
+    openapi_url="/openapi.json" if IS_DEV else None,
 )
 
-# CORS configuration
+@app.middleware("http")
+async def security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+# CORS: only explicitly allowed origins (configured via ALLOWED_ORIGINS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 security_bearer = HTTPBearer()
@@ -41,9 +56,9 @@ security_bearer = HTTPBearer()
 # --- Pydantic Schemas ---
 
 class UserRegister(BaseModel):
-    username: str
-    password: str
-    role: str = "parent" # parent | teacher | specialist | admin
+    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=10, max_length=128)
+    role: str = "parent"  # self-registration allows parent | teacher only
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -96,39 +111,46 @@ class ReportApproval(BaseModel):
 
 # --- Auth Dependencies ---
 
+bearer_scheme = HTTPBearer(auto_error=False)
+
 def get_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False)),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db)
 ) -> models.User:
-    if credentials and credentials.credentials:
-        token = credentials.credentials
-        payload = security.decode_token(token)
-        if payload and payload.get("type") == "access":
-            user_id = payload.get("sub")
-            try:
-                user = db.query(models.User).filter(models.User.id == uuid.UUID(user_id)).first()
-                if user:
-                    return user
-            except Exception:
-                pass
-            role = payload.get("role")
-            if role:
-                user = db.query(models.User).filter(models.User.role == role).first()
-                if user:
-                    return user
-
-    user = db.query(models.User).first()
+    unauthorized = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="غير مصرح",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    if not credentials or not credentials.credentials:
+        raise unauthorized
+    payload = security.decode_token(credentials.credentials)
+    if not payload or payload.get("type") != "access":
+        raise unauthorized
+    try:
+        user_uuid = uuid.UUID(str(payload.get("sub")))
+    except ValueError:
+        raise unauthorized
+    user = db.query(models.User).filter(models.User.id == user_uuid).first()
     if not user:
-        user = models.User(username="specialist", email="specialist@musanad.sa", password_hash="dummy", role="specialist")
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-    return user
+        raise unauthorized
+    return user  # role always comes from the database, never from the token
 
 def verify_roles(allowed_roles: List[str]):
     def dependency(user: models.User = Depends(get_current_user)):
+        if user.role not in allowed_roles:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="ليس لديك صلاحية لهذا الإجراء")
         return user
     return dependency
+
+STAFF_ROLES = {"specialist", "admin", "teacher"}
+
+def assert_child_access(user: models.User, child) -> None:
+    """Staff may access every child; parents only the children they registered (404 hides existence)."""
+    if user.role in STAFF_ROLES:
+        return
+    if child is None or child.created_by != user.id:
+        raise HTTPException(status_code=404, detail="غير موجود")
 
 # Helper to log audit events
 def log_audit(
@@ -158,6 +180,9 @@ def startup_event():
         "assessment_sessions": [
             ("child_age_months", "INTEGER"),
         ],
+        "children": [
+            ("created_by", "UUID"),
+        ],
         "draft_reports": [
             ("differential_considerations", "JSON"),
             ("intervention_plan", "JSON"),
@@ -174,51 +199,54 @@ def startup_event():
         for table, cols in _migrations.items():
             for col_name, col_type in cols:
                 try:
-                    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}"))
+                    sql_type = "CHAR(32)" if col_type == "UUID" and engine.dialect.name == "sqlite" else col_type
+                    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col_name} {sql_type}"))
                     conn.commit()
                 except Exception:
                     pass  # Column already exists
 
-    # Attempt to seed basic users if database is blank
-    db = SessionLocal()
-    try:
-        if db.query(models.User).count() == 0:
-            print("[Startup] Database is empty. Seeding demo credentials...")
-            demo_users = [
-                models.User(username="admin",      email="admin@akhessai.sa",      password_hash=security.hash_password("admin123"),      role="admin"),
-                models.User(username="specialist", email="specialist@akhessai.sa", password_hash=security.hash_password("specialist123"), role="specialist"),
-                models.User(username="parent",     email="parent@akhessai.sa",     password_hash=security.hash_password("parent123"),     role="parent"),
-                models.User(username="teacher",    email="teacher@akhessai.sa",    password_hash=security.hash_password("teacher123"),    role="teacher"),
-            ]
-            db.add_all(demo_users)
-            db.commit()
-            print("[Startup] Seeded: admin, specialist, parent, teacher")
-        else:
-            # Backfill emails for existing users that have none
-            email_map = {
-                "admin":      "admin@akhessai.sa",
-                "specialist": "specialist@akhessai.sa",
-                "parent":     "parent@akhessai.sa",
-                "teacher":    "teacher@akhessai.sa",
-            }
-            for uname, uemail in email_map.items():
-                u = db.query(models.User).filter(models.User.username == uname).first()
-                if u and not u.email:
-                    u.email = uemail
-            db.commit()
-    except Exception as e:
-        print(f"[Startup] Error seeding: {e}")
-    finally:
-        db.close()
+    # Demo users are created only when explicitly enabled, with a password from the environment.
+    if settings.SEED_DEMO_USERS:
+        if len(settings.DEMO_PASSWORD) < 12:
+            print("[Startup] SEED_DEMO_USERS is on but DEMO_PASSWORD is missing or shorter than 12 chars; skipping.")
+            return
+        db = SessionLocal()
+        try:
+            if db.query(models.User).count() == 0:
+                pw_hash = security.hash_password(settings.DEMO_PASSWORD)
+                db.add_all([
+                    models.User(username=u, email=f"{u}@example.com", password_hash=pw_hash, role=u)
+                    for u in ("admin", "specialist", "parent", "teacher")
+                ])
+                db.commit()
+                print("[Startup] Seeded demo users: admin, specialist, parent, teacher")
+        except Exception as e:
+            print(f"[Startup] Error seeding: {e}")
+        finally:
+            db.close()
 
 # --- Auth Endpoints ---
 
+SELF_REGISTER_ROLES = {"parent", "teacher"}
+_DUMMY_HASH = security.hash_password(secrets.token_urlsafe(16))  # equalises timing for unknown users
+
+# Simple in-memory brute-force limiter (per instance): 5 failures / 15 minutes per username
+_FAILED_LOGINS: Dict[str, List[float]] = defaultdict(list)
+_MAX_FAILS, _WINDOW = 5, 15 * 60
+
+def _is_locked(key: str) -> bool:
+    now = time.time()
+    _FAILED_LOGINS[key] = [ts for ts in _FAILED_LOGINS[key] if now - ts < _WINDOW]
+    return len(_FAILED_LOGINS[key]) >= _MAX_FAILS
+
 @app.post("/auth/register", response_model=Dict[str, Any])
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
+    if user_data.role not in SELF_REGISTER_ROLES:
+        raise HTTPException(status_code=403, detail="لا يمكن التسجيل بهذا الدور")
     existing = db.query(models.User).filter(models.User.username == user_data.username).first()
     if existing:
         raise HTTPException(status_code=400, detail="اسم المستخدم مسجل مسبقًا")
-        
+
     new_user = models.User(
         username=user_data.username,
         password_hash=security.hash_password(user_data.password),
@@ -227,41 +255,32 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    
-    log_audit(db, "USER_REGISTER", new_user.id, None, {"username": new_user.username, "role": new_user.role})
-    
+
+    log_audit(db, "USER_REGISTER", new_user.id, None, {"role": new_user.role})
+
     return {"status": "success", "message": "تم التسجيل بنجاح"}
 
-@app.post("/auth/token", response_model=TokenResponse)
-def login(credentials: HTTPAuthorizationCredentials = Depends(security_bearer), db: Session = Depends(get_db)):
-    # Standard username/password validation via Basic/Bearer schema
-    # For simplicity in testing, we also support username/password payload in body
-    pass
-
-# We also implement a standard JSON login route:
 class JSONLogin(BaseModel):
-    email: str
-    password: str
+    username: str = Field(..., max_length=100)
+    password: str = Field(..., max_length=128)
 
 @app.post("/auth/login", response_model=TokenResponse)
 def login_json(credentials: JSONLogin, db: Session = Depends(get_db)):
-    # POC Instant Login: match user by email, username, or role
-    user = db.query(models.User).filter(models.User.email == credentials.email).first()
-    if not user:
-        user = db.query(models.User).filter(models.User.username == credentials.email).first()
-    if not user:
-        user = db.query(models.User).filter(models.User.role == credentials.email).first()
-    if not user:
-        user = db.query(models.User).first()
-        
-    access = security.create_access_token(user.id, user.role if user else credentials.email)
-    refresh = security.create_refresh_token(user.id if user else uuid.uuid4())
-    
+    key = credentials.username.lower()
+    if _is_locked(key):
+        raise HTTPException(status_code=429, detail="محاولات كثيرة، حاول لاحقًا")
+    user = db.query(models.User).filter(models.User.username == credentials.username).first()
+    ok = security.verify_password(credentials.password, user.password_hash if user else _DUMMY_HASH)
+    if not user or not ok:
+        _FAILED_LOGINS[key].append(time.time())
+        raise HTTPException(status_code=401, detail="بيانات الدخول غير صحيحة")
+    _FAILED_LOGINS.pop(key, None)
+    log_audit(db, "USER_LOGIN", user.id, None, {})
     return {
-        "access_token": access,
-        "refresh_token": refresh,
-        "role": user.role if user else credentials.email,
-        "username": user.username if user else credentials.email
+        "access_token": security.create_access_token(user.id, user.role),
+        "refresh_token": security.create_refresh_token(user.id),
+        "role": user.role,
+        "username": user.username,
     }
 
 @app.post("/auth/refresh", response_model=Dict[str, str])
@@ -291,6 +310,7 @@ def create_child(
     user: models.User = Depends(get_current_user)
 ):
     new_child = models.Child(gender=child.gender)
+    new_child.created_by = user.id
     new_child.name = child.name
     new_child.dob = child.dob
     new_child.nationality = child.nationality
@@ -311,16 +331,12 @@ def list_children(
     db: Session = Depends(get_db), 
     user: models.User = Depends(get_current_user)
 ):
-    # Specialists, Admin and Teachers can view all children.
-    # Parents see only children linked to their user account (or all for demo/POC purposes).
-    # To be secure yet compliant with POC:
-    if user.role == "parent":
-        # Return children where contact info matches user or returning all for testing
-        # Let's filter children. For demo simplicity, we fetch all but in production filter.
-        children_list = db.query(models.Child).all()
-    else:
-        children_list = db.query(models.Child).all()
-        
+    # Staff (specialist/admin/teacher) see all children; parents only the ones they registered.
+    query = db.query(models.Child)
+    if user.role not in STAFF_ROLES:
+        query = query.filter(models.Child.created_by == user.id)
+    children_list = query.all()
+
     result = []
     for c in children_list:
         # Decrypt fields dynamically via properties
@@ -343,7 +359,11 @@ def list_sessions(
     user: models.User = Depends(get_current_user)
 ):
     """Return all assessment sessions with child info and response count."""
-    sessions = db.query(models.AssessmentSession).all()
+    sessions_query = db.query(models.AssessmentSession)
+    if user.role not in STAFF_ROLES:
+        own_child_ids = [c.id for c in db.query(models.Child).filter(models.Child.created_by == user.id).all()]
+        sessions_query = sessions_query.filter(models.AssessmentSession.child_id.in_(own_child_ids))
+    sessions = sessions_query.all()
     result = []
     for s in sessions:
         child = db.query(models.Child).filter(models.Child.id == s.child_id).first()
@@ -378,7 +398,8 @@ def create_session(
     child = db.query(models.Child).filter(models.Child.id == payload.child_id).first()
     if not child:
         raise HTTPException(status_code=404, detail="الطفل غير موجود")
-        
+    assert_child_access(user, child)
+
     # Calculate age band based on DOB (0-6 or 6-18)
     try:
         birth_date = datetime.strptime(child.dob, "%Y-%m-%d")
@@ -409,10 +430,15 @@ def create_session(
     return {"session_id": str(new_session.id), "status": "success"}
 
 @app.get("/sessions/{session_id}", response_model=Dict[str, Any])
-def get_session(session_id: uuid.UUID, db: Session = Depends(get_db)):
+def get_session(
+    session_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user)
+):
     session = db.query(models.AssessmentSession).filter(models.AssessmentSession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="الجلسة غير موجودة")
+    assert_child_access(user, session.child)
         
     child = session.child
     
@@ -439,10 +465,15 @@ def get_session(session_id: uuid.UUID, db: Session = Depends(get_db)):
     }
 
 @app.get("/sessions/{session_id}/next-question", response_model=Dict[str, Any])
-def get_session_next_question(session_id: uuid.UUID, db: Session = Depends(get_db)):
+def get_session_next_question(
+    session_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user)
+):
     session = db.query(models.AssessmentSession).filter(models.AssessmentSession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="الجلسة غير موجودة")
+    assert_child_access(user, session.child)
         
     responses = db.query(models.Response).filter(models.Response.session_id == session_id).all()
     
@@ -468,6 +499,7 @@ def submit_response(
     session = db.query(models.AssessmentSession).filter(models.AssessmentSession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="الجلسة غير موجودة")
+    assert_child_access(user, session.child)
 
     # Role-to-informant gate: only the matching role may submit answers
     ROLE_INFORMANT_MAP = {"parent": "parent", "teacher": "teacher", "specialist": "specialist"}
@@ -724,13 +756,22 @@ def trigger_report_draft(
     return {"status": "success", "report_id": report.id}
 
 @app.get("/sessions/{session_id}/report", response_model=Dict[str, Any])
-def get_report(session_id: uuid.UUID, db: Session = Depends(get_db)):
+def get_report(
+    session_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user)
+):
     report = db.query(models.DraftReport).filter(models.DraftReport.session_id == session_id).first()
     if not report:
         raise HTTPException(status_code=404, detail="لم يتم إنشاء مسودة التقرير بعد")
-        
+
     session = report.session
     child = session.child
+    if user.role not in {"specialist", "admin"}:
+        # Unapproved AI drafts are for clinicians only; approved reports only for the owning parent.
+        if report.status != "approved":
+            raise HTTPException(status_code=403, detail="ليس لديك صلاحية لهذا الإجراء")
+        assert_child_access(user, child)
     
     return {
         "id": report.id,

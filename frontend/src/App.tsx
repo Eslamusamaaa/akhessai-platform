@@ -9,7 +9,6 @@ import apiFetch from "./apiFetch";
 const ROLES = [
   {
     username: "parent",
-    password: "parent123",
     label: "ولي الأمر",
     subtitle: "تسجيل الأطفال ومتابعة التقييم",
     icon: Users,
@@ -21,7 +20,6 @@ const ROLES = [
   },
   {
     username: "teacher",
-    password: "teacher123",
     label: "المعلم",
     subtitle: "تعبئة تقييم الطالب في البيئة المدرسية",
     icon: GraduationCap,
@@ -33,7 +31,6 @@ const ROLES = [
   },
   {
     username: "specialist",
-    password: "specialist123",
     label: "الأخصائي",
     subtitle: "الملاحظة السريرية ومراجعة التقارير",
     icon: Stethoscope,
@@ -45,7 +42,6 @@ const ROLES = [
   },
   {
     username: "admin",
-    password: "admin123",
     label: "مدير النظام",
     subtitle: "الإشراف الكامل وسجل التدقيق الأمني",
     icon: ShieldCheck,
@@ -66,15 +62,40 @@ export const App: React.FC = () => {
   const [page, setPage] = useState<"dashboard" | "assessment_flow" | "clinician_portal">("dashboard");
   const [activeSessionId, setActiveSessionId] = useState<string>("");
 
-  const handleRoleSelect = (username: string) => {
-    const tokenVal = "poc-token-" + username;
-    setToken(tokenVal);
-    setRole(username);
-    setUserEmail(username);
-    sessionStorage.setItem("token", tokenVal);
-    sessionStorage.setItem("role", username);
-    sessionStorage.setItem("userEmail", username);
-    setPage("dashboard");
+  const DEMO_MODE = (import.meta as any).env?.VITE_DEMO_MODE === "true";
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+    setSubmitting(true);
+    try {
+      const res = await apiFetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      if (!res.ok) {
+        setLoginError(res.status === 429 ? "محاولات كثيرة، حاول لاحقًا" : "بيانات الدخول غير صحيحة");
+        return;
+      }
+      const data = await res.json();
+      setToken(data.access_token);
+      setRole(data.role);
+      setUserEmail(data.username);
+      sessionStorage.setItem("token", data.access_token);
+      sessionStorage.setItem("role", data.role);
+      sessionStorage.setItem("userEmail", data.username);
+      setPassword("");
+      setPage("dashboard");
+    } catch {
+      setLoginError("تعذر الاتصال بالخادم");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
@@ -108,7 +129,35 @@ export const App: React.FC = () => {
 
         {/* Role Cards */}
         <div className="w-full max-w-3xl">
-          <p className="text-center text-slate-500 font-semibold mb-6 text-sm">اختر دورك للدخول مباشرةً</p>
+          <form onSubmit={handleLogin} className="max-w-sm mx-auto mb-8 space-y-3 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <input
+              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-right"
+              placeholder="اسم المستخدم"
+              autoComplete="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <input
+              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-right"
+              placeholder="كلمة المرور"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {loginError && <p className="text-sm text-red-600 text-right">{loginError}</p>}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-brand-500 text-white font-bold rounded-xl py-3 disabled:opacity-60"
+            >
+              {submitting ? "جارٍ الدخول..." : "تسجيل الدخول"}
+            </button>
+          </form>
+          {DEMO_MODE && (<>
+          <p className="text-center text-slate-500 font-semibold mb-6 text-sm">وضع العرض: اختر دورًا لتعبئة اسم المستخدم</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {ROLES.map((r) => {
               const Icon = r.icon;
@@ -116,7 +165,7 @@ export const App: React.FC = () => {
               return (
                 <button
                   key={r.username}
-                  onClick={() => handleRoleSelect(r.username)}
+                  onClick={() => setUsername(r.username)}
                   disabled={loadingRole !== null}
                   className={`
                     relative flex items-center gap-4 p-5 rounded-2xl border-2 bg-white text-right
@@ -144,6 +193,7 @@ export const App: React.FC = () => {
               );
             })}
           </div>
+          </>)}
         </div>
 
         <p className="mt-10 text-xs text-slate-400">© {new Date().getFullYear()} منصة أخصائي للتقييم والتأهيل الفردي</p>
@@ -178,7 +228,7 @@ export const App: React.FC = () => {
               <button
                 onClick={handleLogout}
                 className="p-2 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition"
-                title="العودة لاختيار الدور"
+                title="تسجيل الخروج"
               >
                 <LogOut className="w-5 h-5" />
               </button>
