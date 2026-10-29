@@ -18,8 +18,26 @@ from sqlalchemy import create_engine, text
 ROLES = {"parent", "teacher", "specialist", "admin"}
 
 
+def clean_url(raw: str) -> str:
+    """Accept pasted text such as: psql 'postgresql://...' or DATABASE_URL="postgresql://..." """
+    raw = raw.strip()
+    start = raw.find("postgres")
+    if start == -1:
+        return raw
+    url = raw[start:]
+    url = url.split()[0].strip("'\"`;")
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://"):]
+    return url
+
+
 def main() -> None:
-    db_url = getpass.getpass("DATABASE_URL (hidden): ").strip()
+    raw = getpass.getpass("DATABASE_URL (paste, nothing will show; press Enter): ")
+    db_url = clean_url(raw)
+    # Safe diagnostics: never prints the password
+    print(f"Received {len(raw)} characters; starts with: {db_url[:13]!r}")
+    if not db_url.startswith("postgresql://"):
+        sys.exit("The pasted text is not a postgresql:// URL. Right-click to paste, or copy the Neon 'Connection string'.")
     username = input("Username: ").strip()
     role = input(f"Role {sorted(ROLES)}: ").strip()
     password = getpass.getpass("Password (12+ chars, hidden): ")
