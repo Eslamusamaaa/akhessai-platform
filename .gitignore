@@ -38,3 +38,6 @@ Thumbs.db
 *.db.*
 *.sql
 *.dump
+
+# Local tooling
+.claude/
