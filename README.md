@@ -303,7 +303,7 @@ Then run `python seed.py` (or just start the server on an empty database). It cr
 ## Demo flow (proof of concept)
 
 One case moves through three roles: a **parent** registers a child and answers an adaptive questionnaire; a **teacher** adds school-environment answers; a **specialist** records a clinical observation and reviews deterministic severity scores, priority tier and parent/teacher discrepancy flags before an AI-drafted report is approved.
-Screenshots of each role's flow (fictional data) are in [`mostaqel/first-project`](mostaqel/first-project/README.md).
+Screenshots of each role's flow (fictional data) are in [`docs/walkthrough`](docs/walkthrough/README.md).
 
 ---
 
