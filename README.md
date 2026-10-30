@@ -6,6 +6,19 @@ The application UI and clinical content are in Modern Standard Arabic (RTL) — 
 
 > **Status:** Proof of Concept. Not certified for HIPAA/GDPR or clinical deployment. See [Disclaimers](#disclaimers).
 
+## Live deployment
+
+| | |
+|---|---|
+| **Platform (frontend)** | [frontend-rust-rho-unmixly180.vercel.app](https://frontend-rust-rho-unmixly180.vercel.app) |
+| **API (backend)** | [backend-nine-bice-71.vercel.app](https://backend-nine-bice-71.vercel.app) — interactive docs disabled in production (`docs_url=None` unless `APP_ENV=development`, see [`main.py`](backend/main.py)) |
+| **Database** | Neon (managed Postgres), connected via pooled `DATABASE_URL` |
+| **Hosting** | Vercel — frontend and backend are two independent projects, wired together by a same-origin `/api/*` rewrite (see [`frontend/vercel.json`](frontend/vercel.json) and [DEPLOYMENT.md](DEPLOYMENT.md)) |
+
+**Getting access** — there are no public demo passwords in this repo on purpose (a README is public; a login system that ships its own passwords isn't one). Two ways in:
+- **Parent / Teacher** — self-register from the login screen (`POST /auth/register`, see [API surface](#api-surface)). These two roles are open by design: a parent needs no prior invitation to register their own child.
+- **Specialist / Admin** — not self-serve, on purpose (these roles see every case and can approve clinical reports). An existing admin creates the account directly against the database with [`backend/scripts/create_user.py`](backend/scripts/create_user.py) — an interactive script that prompts for the connection string and a password with `getpass` (nothing is echoed, logged, or written to disk).
+
 ---
 
 ## Table of Contents
@@ -20,9 +33,11 @@ The application UI and clinical content are in Modern Standard Arabic (RTL) — 
 8. [Security & privacy](#security--privacy)
 9. [Tech stack](#tech-stack)
 10. [Project structure](#project-structure)
-11. [Setup & running locally](#setup--running-locally)
-12. [API surface](#api-surface)
-13. [Disclaimers](#disclaimers)
+11. [Frontend architecture — how the React app is built](#frontend-architecture--how-the-react-app-is-built)
+12. [Backend integration guide](#backend-integration-guide)
+13. [Setup & running locally](#setup--running-locally)
+14. [API surface](#api-surface)
+15. [Disclaimers](#disclaimers)
 
 ---
 
@@ -224,6 +239,132 @@ akhessai-platform/
 ├── .env.example
 └── backend/.env.example
 ```
+
+---
+
+## Frontend architecture — how the React app is built
+
+React 18 + TypeScript + Vite, no router, no state-management library. The whole app is one state machine held in a single root component, which is a deliberate choice for a POC this size — there's exactly one thing on screen at a time (login, or one of three pages), so a router/Redux layer would add indirection without adding capability.
+
+### Entry point and shell
+
+- [`frontend/src/main.tsx`](frontend/src/main.tsx) — mounts `<App />` into the DOM. Nothing else lives here; no providers, no router, no store.
+- [`frontend/src/App.tsx`](frontend/src/App.tsx) — the whole shell:
+  - `token` / `role` / `userEmail` state, hydrated once from `sessionStorage` on first render (`useState(() => sessionStorage.getItem("token"))`) so a page refresh doesn't log you out.
+  - `if (!token)` gates **everything**: no router guard, no protected-route wrapper — the entire authenticated app literally does not render until `handleLogin` succeeds and sets `token`. See [Roles & access control](#roles--access-control) for why this matters.
+  - `page` state (`"dashboard" | "assessment_flow" | "clinician_portal"`) is the de-facto router — `setPage(...)` is the only navigation primitive in the app. No URL ever changes; refreshing always lands back on the dashboard (by design — session state is server-side, not URL-encoded).
+  - `handleLogin` calls `POST /auth/login` through [`apiFetch`](frontend/src/apiFetch.ts), stores the returned JWT pair in `sessionStorage` (not `localStorage` — cleared when the tab closes, smaller XSS persistence window).
+  - `VITE_DEMO_MODE=true` renders 4 role buttons that just prefill the username field — it does **not** bypass the password check; see [`App.tsx:159`](frontend/src/App.tsx#L159).
+
+### Pages (one per role-flow, not per URL)
+
+| File | Used by | Responsibility |
+|---|---|---|
+| [`pages/Dashboard.tsx`](frontend/src/pages/Dashboard.tsx) | parent, teacher, admin | Case list + stats. For a parent: register a child (`POST /children`), see their sessions. Launches `assessment_flow` for a given `sessionId`. |
+| [`pages/AssessmentFlow.tsx`](frontend/src/pages/AssessmentFlow.tsx) | parent, teacher | Pulls one question at a time from `GET /sessions/{id}/next-question`, renders it via `QuestionRenderer`, posts the answer to `POST /sessions/{id}/respond`, repeats until the backend reports `finished: true`. The adaptive sequencing logic lives entirely server-side ([`questions/resolver.py`](backend/questions/resolver.py)) — this component has no branching logic of its own, it just loops. |
+| [`pages/ClinicianPortal.tsx`](frontend/src/pages/ClinicianPortal.tsx) | specialist, admin | The biggest page (735 lines): clinical observation form (10 rating-scale fields → `POST /sessions/{id}/observation`), triggers `POST /sessions/{id}/generate-report`, renders the AI draft with every field editable, and submits the specialist's final version to `POST /sessions/{id}/report/approve`. |
+
+### Shared components
+
+- [`components/QuestionRenderer.tsx`](frontend/src/components/QuestionRenderer.tsx) — renders a single question. Branches on the backend-provided `question.type` (`single_select` / `multi_select` / `likert`) and renders the matching control; has no knowledge of clinical content, domain tags, or scoring — purely a dumb renderer driven by the question-bank JSON shape the API returns.
+- [`components/ErrorBoundary.tsx`](frontend/src/components/ErrorBoundary.tsx) — wraps each page (see `<ErrorBoundary>` in `App.tsx`) so a render-time exception in one page shows a fallback instead of blanking the whole app.
+- [`apiFetch.ts`](frontend/src/apiFetch.ts) — a 15-line `fetch` wrapper. All API calls prefix with `/api` (not a full URL) — in production this is same-origin, resolved by the Vercel rewrite in [`frontend/vercel.json`](frontend/vercel.json); in local dev, Vite's dev-server proxy (or docker-compose networking) does the same job. **This is why the frontend never needs `VITE_API_URL` or CORS configuration in production** — it never makes a cross-origin request.
+- [`locales/ar.json`](frontend/src/locales/ar.json) — UI copy. The app is Arabic-only / RTL-only by design (no i18n framework, no language switcher) — `dir="rtl"` is set globally, and every component is written RTL-first (`text-right`, flipped flex directions) rather than LTR-with-an-RTL-override.
+
+### Styling & build tooling
+
+- **Tailwind CSS** ([`tailwind.config.js`](frontend/tailwind.config.js)) — utility-first, no CSS modules, no styled-components. The `brand` color scale used throughout (`bg-brand-500`, `border-brand-200`, etc.) is a custom palette defined in the Tailwind config, not Tailwind's defaults.
+- **Vite** ([`vite.config.ts`](frontend/vite.config.ts)) — dev server + production bundler. No SSR, no meta-framework (Next.js/Remix) — it's a plain client-rendered SPA, which matches the single-root-component architecture above.
+- **TypeScript** ([`tsconfig.json`](frontend/tsconfig.json)) — strict mode on. Component props are typed inline (no shared `types.ts` — the prop surface between pages is intentionally small: `token`, `role`, `sessionId`, and a couple of callbacks).
+- **Icons** — [`lucide-react`](https://lucide.dev/), tree-shaken per-icon imports (`import { LogOut, User } from "lucide-react"`).
+
+---
+
+## Backend integration guide
+
+For a team integrating another service against this backend (a mobile app, an internal ops tool, a different frontend) — everything you need, with no secrets.
+
+### Base URL and transport
+
+- Production API: `https://backend-nine-bice-71.vercel.app` (no trailing slash on paths).
+- Everything is JSON in, JSON out. No form-encoded endpoints, no file uploads in the current API surface.
+- The backend sets `Cache-Control: no-store` and strict security headers on every response ([`main.py`](backend/main.py), the `security_headers` middleware) — don't rely on HTTP caching for any endpoint.
+- CORS (`ALLOWED_ORIGINS`) only needs to include your origin if you're calling the API **directly from a browser**. Server-to-server integrations (no browser involved) aren't subject to CORS at all.
+
+### Authentication flow
+
+JWT, two-token pattern:
+
+```
+POST /auth/login
+{ "username": "...", "password": "..." }
+
+→ 200 { "access_token": "...", "refresh_token": "...", "token_type": "bearer", "role": "parent", "username": "..." }
+```
+
+- **Access token** — 30 minutes, put it on every subsequent request: `Authorization: Bearer <access_token>`.
+- **Refresh token** — 7 days, exchange it for a new access token via `POST /auth/refresh` (`{ "refresh_token": "..." }`) once the access token expires. There is no token-revocation endpoint in this version — treat both tokens as sensitive for their full lifetime.
+- **Registration** — `POST /auth/register` with `{ "username", "password", "role" }` is **only** open for `role: "parent"` or `role: "teacher"` (enforced server-side, see [`main.py`](backend/main.py) — `SELF_REGISTER_ROLES`). Requesting `specialist` or `admin` through this endpoint returns `403`.
+- **Brute-force protection** — 5 failed login attempts per username locks that username out for 15 minutes, in-memory per server instance (`_FAILED_LOGINS` in `main.py`). A 429 is returned while locked.
+
+### Roles and what they can call
+
+Every endpoint except `/auth/login`, `/auth/register`, `/auth/refresh` requires a valid bearer token. Beyond that, role gates apply per-endpoint (see the full table in [API surface](#api-surface)):
+
+| Role | Can call |
+|---|---|
+| `parent` | `POST /children`, `GET /children`, `GET /sessions`, answer questions while `current_informant == "parent"` |
+| `teacher` | Answer questions while `current_informant == "teacher"` |
+| `specialist` / `admin` | Clinical observation, report generation/approval, audit log (admin only on the audit log) |
+
+A session has exactly one `current_informant` at a time (`parent` → `teacher` → `specialist`, enforced server-side — see `ROLE_INFORMANT_MAP` in [`main.py`](backend/main.py)). Posting an answer out of turn returns `403` with the expected informant named in the error.
+
+### Session state machine
+
+```
+core_screener  →  specialized_screening  →  clinical_observation  →  (report generated)  →  (report approved)
+   (parent)            (teacher)               (specialist)
+```
+
+Poll `GET /sessions/{id}` for `status` and `current_informant` to know what's next; `GET /sessions/{id}/next-question` returns `{"finished": true}` once a given informant has no more questions, which is the frontend's (and your integration's) signal to move to the next stage.
+
+### Typical integration calls
+
+```bash
+# 1. Authenticate
+curl -X POST https://backend-nine-bice-71.vercel.app/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"your_username","password":"your_password"}'
+
+# 2. Everything else: same pattern, with the bearer token
+curl https://backend-nine-bice-71.vercel.app/sessions \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
+
+# 3. Adaptive question loop (see pages/AssessmentFlow.tsx for the reference client implementation)
+curl https://backend-nine-bice-71.vercel.app/sessions/$SESSION_ID/next-question \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
+
+curl -X POST https://backend-nine-bice-71.vercel.app/sessions/$SESSION_ID/respond \
+  -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" \
+  -d '{"question_id":"...","selected_options":["..."]}'
+```
+
+### Error conventions
+
+- `401` — missing/invalid/expired token.
+- `403` — authenticated, but wrong role or wrong turn in the informant sequence.
+- `404` — session/child/question not found, or not visible to your role.
+- `422` — request body failed Pydantic validation (standard FastAPI shape: `{"detail": [{"loc": [...], "msg": "...", "type": "..."}]}`).
+- `429` — login brute-force lockout.
+- Error messages for user-facing auth/validation failures are in Arabic (the product is Arabic-only) — don't pattern-match on message text, use the status code.
+
+### What you will never get back
+
+No raw PHI leaves the encryption boundary unexpectedly: child names/contact fields are Fernet-encrypted at rest and only decrypted for a caller with a legitimate relationship to that record (parent of that child, or specialist/admin). The audit log (`GET /audit-logs`, admin-only) records *that* an action happened, never the PHI payload itself — don't expect to reconstruct patient data from the audit trail.
+
+### Reference implementation
+
+The frontend in this repo **is** a complete reference client for this API — see [Frontend architecture](#frontend-architecture--how-the-react-app-is-built) above, particularly [`apiFetch.ts`](frontend/src/apiFetch.ts) for the request wrapper and [`pages/AssessmentFlow.tsx`](frontend/src/pages/AssessmentFlow.tsx) for the full next-question/respond loop.
 
 ---
 
