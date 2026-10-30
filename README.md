@@ -38,6 +38,7 @@ The application UI and clinical content are in Modern Standard Arabic (RTL) — 
 13. [Setup & running locally](#setup--running-locally)
 14. [API surface](#api-surface)
 15. [Disclaimers](#disclaimers)
+16. [Porting the assessment engine to another stack (.NET)](#porting-the-assessment-engine-to-another-stack-net)
 
 ---
 
@@ -52,6 +53,17 @@ A child goes through a multi-informant screening (parent, teacher, and licensed 
 5. Routes the draft to a licensed specialist for review, editing, and approval before it becomes an official record.
 
 The AI never outputs a standalone diagnosis — every generated report is explicitly framed as "indicators requiring specialist review," and every report requires human sign-off before approval.
+
+<table>
+<tr>
+<td width="25%"><img src="docs/walkthrough/parent-flow/01-register-child-form.jpg" width="100%"><br><sub>Parent: register a child</sub></td>
+<td width="25%"><img src="docs/walkthrough/teacher-flow/09-teacher-question.jpg" width="100%"><br><sub>Teacher: school-environment questions</sub></td>
+<td width="25%"><img src="docs/walkthrough/results/18-domain-severity-scores.jpg" width="100%"><br><sub>Deterministic severity scores</sub></td>
+<td width="25%"><img src="docs/walkthrough/results/19-ai-report-summary.jpg" width="100%"><br><sub>AI-drafted report summary</sub></td>
+</tr>
+</table>
+
+More screenshots, all roles, end to end: [`docs/walkthrough`](docs/walkthrough/README.md).
 
 ---
 
@@ -474,3 +486,105 @@ Interactive docs are served by FastAPI at `/docs` (Swagger UI) once the backend 
 > **Clinical disclaimer:** This platform is a decision-support tool, not an independent diagnostic instrument. Any AI-generated content is a draft requiring review, editing, and approval by a licensed clinical specialist.
 >
 > **Technical & privacy disclaimer:** This is a Proof of Concept. It is not currently certified for HIPAA, GDPR, or any national health authority standard. Do not use real patient data with this version — synthetic data only.
+
+---
+
+## Porting the assessment engine to another stack (.NET)
+
+For a team building their **own backend (.NET) and their own mobile app (Flutter)**, not touching this project's server or database — this section tells you exactly what to take, where it lives in this repo, and what to do with it so you keep the logic **unchanged**, not rewritten.
+
+### The short version
+
+This repo's "intelligence" is three independent pieces, none of which are tied to FastAPI, SQLAlchemy, or Postgres. You can lift all three out, as-is, and run them as **one small standalone Python service** that your .NET backend calls over plain HTTP internally (on your own infrastructure, with no connection to this project's deployment). You are not reimplementing the logic in C# — you're keeping the exact same Python code and just removing everything around it that was specific to this repo (auth, DB models, FastAPI routes).
+
+### What to take, file by file
+
+| Take this file | What it is | What you strip out |
+|---|---|---|
+| [`backend/rules/rules_config.yaml`](backend/rules/rules_config.yaml) | The entire rule engine's configuration — every specialty threshold, severity band, priority condition, discrepancy delta. Plain YAML, zero Python-specific syntax. | Nothing — copy it verbatim. |
+| [`backend/rules/evaluator.py`](backend/rules/evaluator.py) | The scoring algorithm (`evaluate_rules()`): weighted domain averages, specialty triggering, severity bands, cross-informant discrepancy, priority tier. | The `import models` line and the one helper `_get_child_age_months()` that reads `session.child_age_months` — replace `session` with any plain object/dict exposing `onboarding_specialties`, `age_band`, `child_age_months`, and replace each `models.Response` with any object exposing `.question_id`, `.selected_options`, `.informant`, `.points`. Nothing else touches a database. |
+| [`backend/questions/bank.json`](backend/questions/bank.json) | The full question bank — every question's text, type, options, and the `points` value attached to each option. Plain JSON. | Nothing — copy it verbatim. This is also what you build your Flutter question-answering screens from directly (see field shapes below). |
+| [`backend/questions/resolver.py`](backend/questions/resolver.py) | The adaptive next-question selection logic (`get_next_question()`) — which question to show next, given what's already answered. | Same as `evaluator.py`: only the `models` import and the plain-object substitution. |
+| [`backend/rag/pipeline.py`](backend/rag/pipeline.py) | Two things in one file: (1) `SEED_DOCUMENTS` — the full 120-document Arabic clinical corpus, hardcoded as a Python list of dicts; (2) the embedding + retrieval logic. | The Qdrant-specific class (`VectorStoreClient`) if you don't want Qdrant — the in-memory path (`_search_in_memory`, used automatically when Qdrant isn't configured) is self-contained and sufficient for this corpus size. |
+| [`backend/llm/client.py`](backend/llm/client.py) | The exact system prompt (`_SYSTEM_TEMPLATE`), the user-prompt assembly (`build_prompt()`), the OpenRouter HTTP call, and the output JSON schema (`ReportDraftSchema`). | Nothing structural — this file has **zero database dependency already**, it's pure prompt-building + one `requests.post()` call. |
+
+### Getting the 120-document corpus out as plain JSON (one command, no hand-copying)
+
+`SEED_DOCUMENTS` lives as a Python literal inside `rag/pipeline.py`, not a separate data file. Pull it out once:
+
+```bash
+cd backend
+python -c "import json; from rag.pipeline import SEED_DOCUMENTS; print(json.dumps(SEED_DOCUMENTS, ensure_ascii=False, indent=2))" > clinical_corpus.json
+```
+
+Now you have a flat 120-item JSON array — load it in your standalone Python service (or hand it to anyone) without ever reading pipeline.py's source.
+
+### Step by step: standing up your own copy of the engine
+
+**1. New, empty folder, independent of this repo:**
+
+```
+engine/
+  rules_config.yaml        # copied verbatim
+  bank.json                 # copied verbatim
+  clinical_corpus.json      # generated above
+  evaluator.py               # copied, DB import stripped (see table above)
+  resolver.py                 # copied, DB import stripped
+  rag_pipeline.py              # copied, Qdrant class removed, points at clinical_corpus.json
+  llm_client.py                 # copied as-is
+  service.py                     # NEW — a ~30-line FastAPI (or even plain `http.server`) wrapper exposing 3 endpoints
+```
+
+**2. `service.py` — the only new code you write.** Three thin endpoints, each one calling straight into the code you just copied:
+
+```python
+from fastapi import FastAPI
+from evaluator import evaluate_rules
+from resolver import get_next_question
+from rag_pipeline import rag_client
+from llm_client import generate_report_draft
+
+app = FastAPI()
+
+@app.post("/engine/evaluate")
+def evaluate(payload: dict):
+    # payload: {"onboarding_specialties": [...], "age_band": "...", "child_age_months": int,
+    #           "responses": [{"question_id": "...", "selected_options": [...], "informant": "...", "points": 0.0}, ...]}
+    session = type("S", (), payload)()          # quick plain object, or write a real dataclass
+    responses = [type("R", (), r)() for r in payload["responses"]]
+    return evaluate_rules(session, responses)
+
+@app.post("/engine/next-question")
+def next_question(payload: dict):
+    session = type("S", (), payload)()
+    responses = [type("R", (), r)() for r in payload["responses"]]
+    return get_next_question(session, responses) or {"finished": True}
+
+@app.post("/engine/generate-report")
+def generate_report(payload: dict):
+    return generate_report_draft(**payload)
+```
+
+(Replace the quick `type(...)` object trick with proper `@dataclass` definitions once this is past a spike — it's here to show the DB coupling is genuinely that thin.)
+
+**3. Install only what these files need** (a much smaller list than the full `requirements.txt`, because you're not running FastAPI auth, SQLAlchemy, or Postgres):
+
+```
+fastapi, uvicorn, pyyaml, pydantic, requests, sentence-transformers
+```
+
+`torch` comes in transitively through `sentence-transformers` — if you'd rather avoid that weight entirely, delete the `sentence-transformers` import path in `rag_pipeline.py` and keep only `_keyword_embedding()` (already in the same file, 192-dim, zero ML dependency, functional but less accurate — see [The RAG pipeline](#the-rag-pipeline)).
+
+**4. Run it** (`uvicorn service:app --port 9000`) **on your own infrastructure** — a container next to your .NET backend, a separate internal service, whatever fits your deployment. Your .NET backend calls `http://localhost:9000/engine/...` (or wherever you deploy it) the same way it calls any other internal microservice — plain HTTP + JSON, nothing Python-specific leaks across that boundary.
+
+### Who computes what, and where the `points` value comes from
+
+One detail that's easy to miss: a submitted answer's `points` value (0–100) is **not** inside `bank.json`'s top-level structure per question — it's attached to each individual **option** (see the question shape in [Backend integration guide §4.3](#backend-integration-guide)). Your .NET backend is responsible for looking up `points` from the chosen option when a user answers a question, exactly like [`main.py`'s `submit_response`](backend/main.py) does, **before** calling `/engine/evaluate` — the engine itself only sums `points` values it's handed, it never re-derives them from the question bank.
+
+### The embedding model, specifically
+
+`paraphrase-multilingual-MiniLM-L12-v2` — a public HuggingFace `sentence-transformers` model, 384 dimensions, no API key, no cost per call, runs entirely on CPU locally inside your Python service (first load takes a few seconds, every call after that is fast). It is **not** OpenAI/Gemini embeddings and has no relationship to the OpenRouter API key — that key is only for the final report-generation LLM call. If your infra strongly prefers a pure-.NET path with zero Python for embeddings specifically, the practical options are: (a) export this exact model to ONNX and run it via ONNX Runtime in C# (straightforward, same weights, same output vectors — search "sentence-transformers ONNX export"), or (b) keep embeddings in the small Python service above and only port the rest. Reimplementing MiniLM's tokenizer + pooling from scratch in C# by hand is not a good use of time — use the ONNX export path if Python has to go away entirely.
+
+### The LLM call needs zero Python, by the way
+
+[`llm/client.py`](backend/llm/client.py)'s `generate_report_draft()` is a single `POST` to `https://openrouter.ai/api/v1/chat/completions` with a JSON body (`model`, `messages`, `temperature: 0.15`, `response_format: {"type": "json_object"}`) and a Bearer `OPENROUTER_API_KEY` header — see the exact request shape in the file. This part you genuinely can reimplement directly in C# with `HttpClient` if you'd rather not run it through the Python service at all; just copy `_SYSTEM_TEMPLATE` and the JSON schema fields verbatim (they're the actual clinical content — the 5 hard rules, the output contract) so the prompt behavior doesn't drift from what's already been tested.
