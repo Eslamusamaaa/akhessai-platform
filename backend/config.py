@@ -37,7 +37,12 @@ class Settings:
         "DATABASE_URL",
         f"sqlite:///{os.path.join(_HERE, 'medical_assessment.db')}"
     )
-    QDRANT_URL: str = os.getenv("QDRANT_URL", "http://localhost:6333")
+    # Postgres + pgvector database holding the RAG guideline corpus (rag/schema.sql).
+    # Required in production (a Neon pooled connection string); defaults to DATABASE_URL locally.
+    RAG_DATABASE_URL: str = os.getenv("RAG_DATABASE_URL") or DATABASE_URL
+    # "pgvector" (default) searches RAG_DATABASE_URL; "memory" is the in-process test/fallback path.
+    RAG_STORE: str = os.getenv("RAG_STORE", "pgvector").lower()
+    RAG_TABLE: str = os.getenv("RAG_TABLE", "rag_documents")
     # Get a key at https://openrouter.ai/keys
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
 
@@ -61,6 +66,9 @@ class Settings:
         "EMBEDDING_MODEL",
         "paraphrase-multilingual-MiniLM-L12-v2"
     )
+    # Tag stored on every rag_documents row (embedding_model column); rows are only
+    # comparable with queries embedded by the same model, so search filters on it.
+    EMBEDDING_VERSION: str = os.getenv("EMBEDDING_VERSION") or EMBEDDING_MODEL
 
 
 if len(Settings.JWT_SECRET) < 32:

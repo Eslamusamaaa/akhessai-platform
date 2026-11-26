@@ -54,7 +54,14 @@ Then set the required environment variables — either via `vercel env add <NAME
 
 `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` is required — the RAG pipeline's ML dependencies (`sentence-transformers` + `torch`) exceed Vercel's default 500 MB function bundle limit; this opts the project into Vercel's large-function allowance (up to 5 GB, Fluid Compute). Expect a slower cold start on the first request after a deploy or period of inactivity (the embedding model has to load into memory) — subsequent requests on a warm instance are fast.
 
-Leave `QDRANT_URL` unset — the pipeline automatically falls back to in-memory cosine search over the 120-document corpus, which is what you want here (running a standalone Qdrant server isn't practical on Vercel).
+RAG retrieval uses Postgres + pgvector in the same Neon database (`RAG_DATABASE_URL`, which defaults to `DATABASE_URL`). Load the corpus once from your machine or CI — never from a request:
+
+```bash
+cd backend
+RAG_DATABASE_URL="<neon pooled connection string>" python -m rag.ingest --init-schema
+```
+
+Re-running it is a no-op unless `rag/corpus.jsonl` changed. Until the table is loaded (or if the database is unreachable), the pipeline falls back to in-memory cosine search over the same 120-document corpus, so reports keep working.
 
 Redeploy to production with the env vars applied:
 ```bash

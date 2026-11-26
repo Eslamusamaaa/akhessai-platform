@@ -11,4 +11,5 @@ migrate_to_neon.py
 *.bak*
 *.db.*
 *.sql
+!rag/schema.sql
 *.dump
