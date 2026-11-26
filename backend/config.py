@@ -62,10 +62,7 @@ class Settings:
     DEMO_PASSWORD: str = os.getenv("DEMO_PASSWORD", "")
 
     LLM_MODEL: str = os.getenv("LLM_MODEL", "google/gemini-2.5-flash")
-    EMBEDDING_MODEL: str = os.getenv(
-        "EMBEDDING_MODEL",
-        "paraphrase-multilingual-MiniLM-L12-v2"
-    )
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "paraphrase-multilingual-MiniLM-L12-v2")
     # Tag stored on every rag_documents row (embedding_model column); rows are only
     # comparable with queries embedded by the same model, so search filters on it.
     EMBEDDING_VERSION: str = os.getenv("EMBEDDING_VERSION") or EMBEDDING_MODEL

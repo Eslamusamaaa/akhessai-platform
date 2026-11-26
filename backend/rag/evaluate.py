@@ -49,7 +49,7 @@ def similarity_only(query: str, k: int = K) -> List[int]:
     for d in pipeline.SEED_DOCUMENTS:
         if d["id"] not in pipeline._DOC_EMBEDDINGS_CACHE:
             pipeline._DOC_EMBEDDINGS_CACHE[d["id"]] = np.array(
-                pipeline.get_text_embedding(pipeline.document_text(d)), dtype=float)
+                pipeline.get_text_embedding(pipeline.document_text(d), kind="passage"), dtype=float)
         s = float(np.dot(q, pipeline._DOC_EMBEDDINGS_CACHE[d["id"]]))
         if d["category"] in ("goals", "strategy"):
             s += 0.05
