@@ -20,6 +20,9 @@ from rag import pipeline
 from rag import validate_corpus as vc
 from rag.parity_check import main_query, sample_inputs
 from rag import evaluate as ev
+from rag import coverage_report as cov
+from rag import dedup_check as dd
+from rag import demand_report as dr
 
 BACKEND = pathlib.Path(__file__).resolve().parent.parent
 
@@ -199,3 +202,88 @@ def test_eval_metrics_and_set_integrity():
     base = {"overall": {"recall@6": 0.8, "mrr": 0.8}, "by_kind": {"domain": {"recall@6": 0.9, "mrr": 0.9}}}
     cur = {"overall": {"recall@6": 0.8, "mrr": 0.8}, "by_kind": {"domain": {"recall@6": 0.85, "mrr": 0.9}}}
     assert ev.regressions(cur, base) == ["kind=domain recall@6: 0.8500 < baseline 0.9000"]
+
+
+# ── Corpus tooling: validation, dedup, coverage, demand ────────────────────────
+
+def _new_doc(**over):
+    base = {
+        "id": 9001, "doc_key": "autism-9001", "title": "عنوان تجريبي", "content": "نص عربي بلا أرقام عن التواصل",
+        "specialty_tag": "autism", "domain_tag": "social_communication", "age_band": "0-6",
+        "category": "strategy", "audience": "parent", "language": "ar", "dialect_examples": None,
+        "source_name": "CDC", "source_url": "https://www.cdc.gov/act-early/milestones/index.html",
+        "license": "US public domain (attribution)", "accessed_at": "2026-11-27", "legacy": False,
+    }
+    return {**base, **over}
+
+
+def test_validator_source_and_number_rules():
+    assert vc.check_record(_new_doc()) == []
+    assert any("source_url" in e for e in vc.check_record(_new_doc(source_url=None)))
+    assert any("accessed_at" in e for e in vc.check_record(_new_doc(accessed_at="yesterday")))
+    unsourced_number = _new_doc(content="يصيب الاضطراب 7% من الأطفال", source_url=None)
+    assert "contains a number but has no source_url" in vc.check_record(unsourced_number)
+    legacy = {**_new_doc(source_url=None, source_name=None, license=None, accessed_at=None), "legacy": True,
+              "content": "نسبة 5% بلا مصدر"}
+    assert vc.check_record(legacy) == [] and vc.legacy_warnings([legacy]) == ["autism-9001"]
+
+
+def test_validator_per_source_cap():
+    docs = [_new_doc(id=9000 + i, doc_key=f"autism-{9000 + i}") for i in range(3)]
+    docs += [_new_doc(id=9100 + i, doc_key=f"autism-{9100 + i}", source_url=f"https://example{i}.org/x")
+             for i in range(17)]
+    _, failures = vc.validate(docs)          # cdc.gov: 3/20 = 15% -> allowed
+    assert not any("cap" in p for _, p in failures)
+    docs.append(_new_doc(id=9999, doc_key="autism-9999"))
+    _, failures = vc.validate(docs)          # cdc.gov: 4/21 = 19% -> over the cap
+    assert any(k == "cdc.gov" and "cap" in p for k, p in failures)
+
+
+def test_dedup_thresholds_with_given_vectors():
+    import numpy as np
+    recs = [_new_doc(id=1, doc_key="autism-0001"), _new_doc(id=2, doc_key="autism-0002"),
+            _new_doc(id=3, doc_key="autism-0003")]
+    a = np.array([1.0, 0.0, 0.0])
+    near = np.array([0.95, (1 - 0.95 ** 2) ** 0.5, 0.0])        # cos 0.95 with a -> review
+    dup = np.array([0.99, (1 - 0.99 ** 2) ** 0.5, 0.0])         # cos 0.99 with a -> reject newer
+    rejects, review = dd.check(recs, vectors=np.stack([a, dup, np.array([0.0, 0.0, 1.0])]), resolved=set())
+    assert [r["reject"] for r in rejects] == ["autism-0002"] and review == []
+    rejects, review = dd.check(recs, vectors=np.stack([a, near, np.array([0.0, 0.0, 1.0])]), resolved=set())
+    assert rejects == [] and [(r["a"], r["b"]) for r in review] == [("autism-0001", "autism-0002")]
+    _, review = dd.check(recs, vectors=np.stack([a, near, np.array([0.0, 0.0, 1.0])]),
+                         resolved={dd.pair_key("autism-0002", "autism-0001")})
+    assert review == []
+
+
+def test_dedup_flags_handmade_near_duplicate_with_real_model():
+    if not pipeline.semantic_model_available():
+        pytest.skip("no sentence-transformers model available")
+    src = pipeline.SEED_DOCUMENTS[1]
+    copy = {**src, "id": 999, "doc_key": "autism-999", "content": src["content"].replace("الطفل", "طفلك", 1)}
+    rejects, review = dd.check([src, copy], resolved=set())
+    assert rejects or review
+
+
+def test_coverage_report_lists_known_gaps():
+    recs, bank = vc.load_jsonl(pipeline.CORPUS_PATH), cov.load_bank()
+    gap_cells = {(d, b, a) for (d, b, a), _, _ in cov.gaps(recs, bank)}
+    for dom in ("receptive_language", "impulsivity", "hyperactivity", "articulation",
+                "vestibular", "proprioceptive", "externalizing"):
+        assert any(d == dom for d, _, _ in gap_cells), dom
+    assert ("executive_function", "0-6", "parent") in gap_cells
+    assert cov.dedicated_audience_counts(recs) == {"all": 120}   # no teacher/specialist docs yet
+
+
+def test_demand_report_is_read_only_and_ranked():
+    import hashlib
+    paths = [cov.BANK_PATH, dr.RULES_PATH]
+    before = [hashlib.sha256(open(p, "rb").read()).hexdigest() for p in paths]
+    assert dr.main([]) == 0
+    assert before == [hashlib.sha256(open(p, "rb").read()).hexdigest() for p in paths]
+    bank, triggers = cov.load_bank(), dr.load_triggers()
+    dem = dr.demand(bank, triggers)
+    assert dem["totals"]["informants"] == {"parent": 53, "teacher": 18, "specialist": 9}
+    assert dem["totals"]["age_bands"] == {"0-6": 52, "6-18": 75}
+    assert dem["per_specialty"]["autism"] == 20
+    q = dr.writing_queue(vc.load_jsonl(pipeline.CORPUS_PATH), bank, triggers)
+    assert [c["questions"] for c in q] == sorted((c["questions"] for c in q), reverse=True)
