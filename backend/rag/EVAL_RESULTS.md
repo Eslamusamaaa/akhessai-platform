@@ -218,3 +218,8 @@ answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7257`
 
 Adds 7 sourced documents: AAP HealthyChildren aggressive behaviour (prevention tips, when to call the pediatrician), AACAP Facts for Families on fighting and biting (parent, preschool teacher and specialist referral), and ASHA language-based learning disabilities (school-age expression and understanding), targeting externalizing 0-6 and language 6-18. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7292`. Baseline re-recorded. Coverage: Gap list (23 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (36%), parent=121 (35%), specialist=38 (11%), teacher=58 (17%).
+
+## Corpus batch 15 (349 docs)
+
+Adds 8 sourced documents from AACAP Facts for Families: DMDD (specialist criteria, parent guide), school refusal (parent signs, school return plan), the anxious child, autism signs for preschool teachers, and ODD (parent tips, specialist comorbidity and treatment). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7326`. Baseline re-recorded. Coverage: Gap list (20 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (36%), parent=125 (36%), specialist=40 (11%), teacher=60 (17%).
