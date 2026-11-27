@@ -1,12 +1,12 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 334,
+  "corpus_docs": 341,
   "overall": {
     "n": 48,
     "recall@6": 0.8097,
     "mrr": 0.9219,
-    "precision@6": 0.7257
+    "precision@6": 0.7292
   },
   "by_kind": {
     "dialect": {
@@ -31,7 +31,7 @@
       "n": 9,
       "recall@6": 0.8296,
       "mrr": 0.8889,
-      "precision@6": 0.6296
+      "precision@6": 0.6481
     }
   },
   "by_domain": {
@@ -69,7 +69,7 @@
       "n": 4,
       "recall@6": 0.775,
       "mrr": 1.0,
-      "precision@6": 0.625
+      "precision@6": 0.6667
     },
     "externalizing": {
       "n": 2,
