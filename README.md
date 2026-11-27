@@ -72,7 +72,7 @@ More screenshots, all roles, end to end: [`docs/walkthrough`](docs/walkthrough/R
 ```
 ┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐     ┌──────────────┐
 │  Frontend    │────▶│  FastAPI Backend  │────▶│  Rule Evaluator  │────▶│  RAG Search   │
-│  React + TS  │     │  JWT + RBAC       │     │  (deterministic) │     │  (Qdrant /    │
+│  React + TS  │     │  JWT + RBAC       │     │  (deterministic) │     │  (pgvector /  │
 │  Tailwind    │◀────│                   │◀────│                  │◀────│   in-memory)  │
 └─────────────┘     └──────────────────┘     └─────────────────┘     └──────┬───────┘
                                                                               │
@@ -87,7 +87,7 @@ More screenshots, all roles, end to end: [`docs/walkthrough`](docs/walkthrough/R
 - **Frontend** — React 18 + TypeScript + Vite + Tailwind CSS, RTL-first layout, 4 role-scoped dashboards (parent, teacher, specialist, admin).
 - **Backend** — FastAPI (Python), stateless JWT auth, SQLAlchemy ORM (SQLite for local dev, PostgreSQL in Docker Compose).
 - **Rule Evaluator** — pure Python + a YAML rules config. No ML involved; every threshold and weight is inspectable and testable.
-- **RAG Pipeline** — `sentence-transformers` (`paraphrase-multilingual-MiniLM-L12-v2`, 384-dim) embeddings over a curated 120-document Arabic clinical corpus, served through Qdrant with an in-memory cosine-similarity fallback when Qdrant isn't running.
+- **RAG Pipeline** — `sentence-transformers` (`paraphrase-multilingual-MiniLM-L12-v2`, 384-dim) embeddings over a curated 120-document Arabic clinical corpus, stored in Postgres + pgvector (`rag_documents`, next to the relational data on Neon) with an in-memory cosine-similarity fallback when no Postgres RAG database is configured.
 - **LLM Layer** — Google Gemini 2.5 Flash, called through OpenRouter, constrained to a strict JSON schema validated with Pydantic before it ever reaches the client.
 
 ---
@@ -133,7 +133,7 @@ This is intentionally **not** ML — every decision is a readable threshold in Y
 
 ## The RAG pipeline
 
-`backend/rag/pipeline.py`
+`backend/rag/pipeline.py` (retrieval), `backend/rag/corpus.jsonl` (the corpus, one JSON record per line), `backend/rag/ingest.py` (loading), `backend/rag/schema.sql` (table)
 
 **Corpus:** 120 Arabic clinical documents, translated and adapted from ASHA, CDC, CHADD, NIH, AOTA, and IDA guidelines. Distribution: autism (30), speech_language (21), adhd (18), learning_disabilities (18), behavior_emotional (18), sensory_processing (15).
 
@@ -158,7 +158,16 @@ Each document is a flat record:
 3. **Score** each candidate via cosine similarity (a dot product, since vectors are pre-normalized).
 4. **Rank and select** the top 6 documents.
 
-**Storage:** Qdrant is the primary vector store (`clinical_guidelines_v4` collection); if Qdrant isn't reachable, the pipeline falls back to an in-memory brute-force cosine search over the same embeddings — functionally identical for a 120-document corpus, just not horizontally scalable.
+**Storage:** Postgres + pgvector is the vector store (table `rag_documents`, schema in `backend/rag/schema.sql`). Vectors are loaded offline and idempotently — never inside a request:
+
+```bash
+cd backend
+python -m rag.ingest --init-schema   # first time: creates the extension, table and indexes
+python -m rag.ingest                 # re-runs are no-ops unless corpus.jsonl changed (no DELETE/DROP)
+python -m rag.parity_check           # pgvector results == in-memory results on sample inputs
+```
+
+Search is one SQL query with the same filters and scoring as before (cosine + 0.05 for `goals`/`strategy`). If the embedding model cannot load, it falls back to Postgres Arabic full-text search; if the database is unreachable or `RAG_DATABASE_URL` is not Postgres (e.g. local SQLite), it falls back to in-memory cosine search over `corpus.jsonl`. `RAG_STORE=memory` forces the in-memory path (tests).
 
 ---
 
@@ -205,7 +214,7 @@ Full breakdown of what's implemented vs. deferred for production: [SECURITY.md](
 - FastAPI, SQLAlchemy, Pydantic
 - PyJWT + Argon2 (`passlib`) for auth
 - `cryptography` (Fernet) for PHI encryption
-- `sentence-transformers` + `qdrant-client` for the RAG pipeline
+- `sentence-transformers` + Postgres/pgvector (via `psycopg2`) for the RAG pipeline
 - `pyyaml` for the rules engine config
 - `pytest` for the evaluator test suite
 
@@ -215,7 +224,7 @@ Full breakdown of what's implemented vs. deferred for production: [SECURITY.md](
 - `lucide-react` icons
 
 **Infra**
-- Docker Compose (PostgreSQL, Qdrant, backend, frontend)
+- Docker Compose (PostgreSQL + pgvector, backend, frontend)
 - SQLite for local (non-Docker) backend development
 
 ---
@@ -233,7 +242,10 @@ akhessai-platform/
 │   ├── llm/
 │   │   └── client.py         # prompt assembly + OpenRouter call
 │   ├── rag/
-│   │   └── pipeline.py       # 120-doc corpus, embeddings, vector search
+│   │   ├── pipeline.py       # embeddings + search_guidelines (pgvector / in-memory)
+│   │   ├── corpus.jsonl      # the 120-doc Arabic corpus (data, one record per line)
+│   │   ├── ingest.py         # idempotent loader into rag_documents
+│   │   └── schema.sql        # pgvector table + indexes
 │   ├── rules/
 │   │   ├── evaluator.py      # scoring, triggering, severity, priority
 │   │   ├── rules_config.yaml # all thresholds — no logic in YAML, only config
@@ -405,7 +417,7 @@ python -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).dec
 docker-compose up --build
 ```
 
-Boots PostgreSQL (`:5432`), Qdrant (`:6333`), backend (`:8000`), frontend (`:5173`).
+Boots PostgreSQL with pgvector (`:5432`), backend (`:8000`), frontend (`:5173`). Load the RAG corpus once with `docker-compose exec backend python -m rag.ingest --init-schema`.
 
 ### 2b. Run natively (no Docker)
 
@@ -423,7 +435,7 @@ npm install
 npm run dev
 ```
 
-Without Qdrant running, the RAG pipeline automatically falls back to in-memory vector search — no extra configuration needed for local development.
+With the default SQLite `DATABASE_URL` (and no `RAG_DATABASE_URL`), the RAG pipeline automatically uses in-memory vector search — no extra configuration needed for local development.
 
 ### 3. Seed data
 
@@ -505,12 +517,12 @@ This repo's "intelligence" is three independent pieces, none of which are tied t
 | [`backend/rules/evaluator.py`](backend/rules/evaluator.py) | The scoring algorithm (`evaluate_rules()`): weighted domain averages, specialty triggering, severity bands, cross-informant discrepancy, priority tier. | The `import models` line and the one helper `_get_child_age_months()` that reads `session.child_age_months` — replace `session` with any plain object/dict exposing `onboarding_specialties`, `age_band`, `child_age_months`, and replace each `models.Response` with any object exposing `.question_id`, `.selected_options`, `.informant`, `.points`. Nothing else touches a database. |
 | [`backend/questions/bank.json`](backend/questions/bank.json) | The full question bank — every question's text, type, options, and the `points` value attached to each option. Plain JSON. | Nothing — copy it verbatim. This is also what you build your Flutter question-answering screens from directly (see field shapes below). |
 | [`backend/questions/resolver.py`](backend/questions/resolver.py) | The adaptive next-question selection logic (`get_next_question()`) — which question to show next, given what's already answered. | Same as `evaluator.py`: only the `models` import and the plain-object substitution. |
-| [`backend/rag/pipeline.py`](backend/rag/pipeline.py) | Two things in one file: (1) `SEED_DOCUMENTS` — the full 120-document Arabic clinical corpus, hardcoded as a Python list of dicts; (2) the embedding + retrieval logic. | The Qdrant-specific class (`VectorStoreClient`) if you don't want Qdrant — the in-memory path (`_search_in_memory`, used automatically when Qdrant isn't configured) is self-contained and sufficient for this corpus size. |
+| [`backend/rag/pipeline.py`](backend/rag/pipeline.py) | The embedding + retrieval logic. `SEED_DOCUMENTS` is loaded from [`backend/rag/corpus.jsonl`](backend/rag/corpus.jsonl) (the 120-document Arabic corpus). | The pgvector path (`_search_pgvector`) if you don't run Postgres — the in-memory path (`_search_in_memory`, used automatically when `RAG_DATABASE_URL` isn't Postgres) is self-contained and sufficient for this corpus size. |
 | [`backend/llm/client.py`](backend/llm/client.py) | The exact system prompt (`_SYSTEM_TEMPLATE`), the user-prompt assembly (`build_prompt()`), the OpenRouter HTTP call, and the output JSON schema (`ReportDraftSchema`). | Nothing structural — this file has **zero database dependency already**, it's pure prompt-building + one `requests.post()` call. |
 
 ### Getting the 120-document corpus out as plain JSON (one command, no hand-copying)
 
-`SEED_DOCUMENTS` lives as a Python literal inside `rag/pipeline.py`, not a separate data file. Pull it out once:
+The corpus is already a data file, [`backend/rag/corpus.jsonl`](backend/rag/corpus.jsonl) (one JSON object per line). If you want a single JSON array instead:
 
 ```bash
 cd backend
@@ -530,7 +542,7 @@ engine/
   clinical_corpus.json      # generated above
   evaluator.py               # copied, DB import stripped (see table above)
   resolver.py                 # copied, DB import stripped
-  rag_pipeline.py              # copied, Qdrant class removed, points at clinical_corpus.json
+  rag_pipeline.py              # copied, pgvector path removed, points at clinical_corpus.json
   llm_client.py                 # copied as-is
   service.py                     # NEW — a ~30-line FastAPI (or even plain `http.server`) wrapper exposing 3 endpoints
 ```

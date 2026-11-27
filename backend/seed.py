@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from database import Base, engine, SessionLocal
 import models
 from security import hash_password
-from rag.pipeline import rag_client
+from config import settings
+from rag import db as ragdb
 
 def seed_db():
     demo_pw = os.getenv("DEMO_PASSWORD", "")
@@ -187,9 +188,17 @@ def seed_db():
     finally:
         db.close()
 
-    # Seed Qdrant
-    print("[Seed] Seeding vector store...")
-    rag_client.initialize_collection()
+    # RAG vectors: idempotent upsert into rag_documents (never dropped or wiped here).
+    if ragdb.is_postgres_url(settings.RAG_DATABASE_URL):
+        print("[Seed] Loading RAG corpus into pgvector (idempotent)...")
+        from rag.ingest import ingest
+        from rag.pipeline import CORPUS_PATH
+        try:
+            ingest(CORPUS_PATH, settings.RAG_TABLE, init_schema=True)
+        except (Exception, SystemExit) as e:
+            print(f"[Seed] RAG ingestion skipped: {e}")
+    else:
+        print("[Seed] RAG_DATABASE_URL is not Postgres - retrieval stays in-memory, nothing to load.")
 
 if __name__ == "__main__":
     seed_db()
