@@ -138,6 +138,7 @@ This is intentionally **not** ML — every decision is a readable threshold in Y
 | Retrieval (`search_guidelines`) | [`backend/rag/pipeline.py`](backend/rag/pipeline.py) |
 | Corpus (text) | [`backend/rag_data/documents/corpus.jsonl`](backend/rag_data/documents/corpus.jsonl) |
 | Vectors (versioned copy) | [`backend/rag_data/embeddings/`](backend/rag_data/embeddings/) — see [`backend/rag_data/README.md`](backend/rag_data/README.md) |
+| Integration guide for another backend (C#/.NET, Flutter) | [`backend/rag_data/INTEGRATION.md`](backend/rag_data/INTEGRATION.md) |
 | Vector store | Neon Postgres + pgvector, table `rag_documents` ([`backend/rag/schema.sql`](backend/rag/schema.sql)) |
 | Loader | [`backend/rag/ingest.py`](backend/rag/ingest.py) |
 | Quality tooling | `validate_corpus.py`, `dedup_check.py`, `coverage_report.py`, `demand_report.py`, `evaluate.py` in [`backend/rag/`](backend/rag/) |
