@@ -111,3 +111,17 @@ Recall@6 dropped 2.3 points with MiniLM (MRR rose 4.2 points): a few broad new d
 (mainly autism-035, the diagnosis overview) outrank more specific legacy ones on 4 queries.
 The owner accepted this regression on 2026-11-27 in exchange for the new coverage, and
 `eval_baseline.json` was re-recorded at 160 docs; later batches are gated against it.
+
+## Corpus batch 2 (190 docs)
+
+Batch 2 adds 30 sourced documents (NICHD learning disabilities, NIMH warning signs and ADHD,
+CDC ADHD presentations and movement milestones, NIDCD autism communication, AAP sensory
+integration). Labels extended only where a new document directly answers the query.
+
+| Model | Recall@6 (160) | Recall@6 (190) | MRR (160) | MRR (190) |
+|---|---|---|---|---|
+| MiniLM (default) | 0.8378 | 0.8208 | 0.8924 | **0.9184** |
+| bge-m3 | 0.8583 | 0.8566 | 0.8715 | 0.9028 |
+
+Recall@6 dipped 1.7 points with MiniLM while MRR rose 2.6 points; accepted under the owner's
+"accept small regressions" decision of 2026-11-27, baseline re-recorded at 190 docs.
