@@ -1,12 +1,12 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 260,
+  "corpus_docs": 274,
   "overall": {
     "n": 48,
-    "recall@6": 0.809,
+    "recall@6": 0.8063,
     "mrr": 0.901,
-    "precision@6": 0.6701
+    "precision@6": 0.6771
   },
   "by_kind": {
     "dialect": {
@@ -17,7 +17,7 @@
     },
     "domain": {
       "n": 21,
-      "recall@6": 0.9048,
+      "recall@6": 0.8984,
       "mrr": 0.9762,
       "precision@6": 0.8016
     },
@@ -25,21 +25,21 @@
       "n": 13,
       "recall@6": 0.6718,
       "mrr": 0.8654,
-      "precision@6": 0.5897
+      "precision@6": 0.6026
     },
     "specialist_obs": {
       "n": 9,
       "recall@6": 0.8222,
       "mrr": 0.8333,
-      "precision@6": 0.5556
+      "precision@6": 0.5741
     }
   },
   "by_domain": {
     "academic_skills": {
       "n": 6,
-      "recall@6": 0.8111,
+      "recall@6": 0.7778,
       "mrr": 0.875,
-      "precision@6": 0.75
+      "precision@6": 0.7222
     },
     "articulation": {
       "n": 5,
@@ -57,7 +57,7 @@
       "n": 4,
       "recall@6": 1.0,
       "mrr": 0.875,
-      "precision@6": 0.625
+      "precision@6": 0.7083
     },
     "executive_function": {
       "n": 3,
@@ -75,7 +75,7 @@
       "n": 2,
       "recall@6": 1.0,
       "mrr": 1.0,
-      "precision@6": 0.6667
+      "precision@6": 0.75
     },
     "hyperactivity": {
       "n": 2,
@@ -91,9 +91,9 @@
     },
     "internalizing": {
       "n": 3,
-      "recall@6": 0.7,
+      "recall@6": 0.7222,
       "mrr": 1.0,
-      "precision@6": 0.6667
+      "precision@6": 0.7222
     },
     "pragmatic_language": {
       "n": 4,

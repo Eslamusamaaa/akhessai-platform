@@ -178,3 +178,8 @@ answers the query): `overall n=48 Recall@6=0.8132 MRR=0.9010 Precision@6=0.6667`
 
 12 Arabic documents from live sources read 2026-11-27: NHS ADHD living-with advice (day planning, instructions, rewards, diet and sleep, school SENCO), NHS autism help with behaviour (routines, change, stimming, meltdowns, where to get help), Berkshire Healthcare NHS FT touch/tactile system (signs, home and classroom strategies), CDC bullying (definition, forms, consequences, school prevention, family role). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8090 MRR=0.9010 Precision@6=0.6701`. Baseline re-recorded. Coverage: Gap list (34 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (48%), parent=76 (29%), specialist=26 (10%), teacher=34 (13%).
+
+## Corpus batch 7 (274 docs)
+
+14 Arabic documents from live NHS pages read 2026-11-27: dyslexia (signs, assessment pathway, school and home support), selective mutism (what it is, parents' do's and don'ts, early-years staff, diagnosis and graded-exposure treatment, school-age difficulties), anxiety in children (signs by age, separation anxiety and common fears, triggers, home tools, school supports, anger as an anxiety sign). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8063 MRR=0.9010 Precision@6=0.6771`. Baseline re-recorded. Coverage: Gap list (33 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (45%), parent=85 (31%), specialist=27 (10%), teacher=38 (14%).
