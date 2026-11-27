@@ -194,8 +194,8 @@ def test_ingest_is_idempotent_and_matches_memory(pg_table):
 
 def test_eval_metrics_and_set_integrity():
 
-    assert ev.score(["a", "b", "c"], ["c", "x"]) == {"recall": 0.5, "rr": 1 / 3}
-    assert ev.score(["a"], ["x"]) == {"recall": 0.0, "rr": 0.0}
+    assert ev.score(["a", "b", "c"], ["c", "x"]) == {"recall": 0.5, "rr": 1 / 3, "precision": 1 / 6}
+    assert ev.score(["a"], ["x"]) == {"recall": 0.0, "rr": 0.0, "precision": 0.0}
     keys = {d["doc_key"] for d in pipeline.SEED_DOCUMENTS}
     items = ev.load_eval()
     assert 40 <= len(items) <= 60

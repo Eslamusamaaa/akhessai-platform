@@ -12,7 +12,8 @@ EMBEDDING_MODEL pick the store and model). Measures only; changes no runtime beh
 
 Recall@6 per query = |relevant ∩ top-6| / |relevant| (relevant = labelled docs present in the corpus;
 the denominator is capped at 6 so a query with more than 6 relevant docs can still score 1.0); MRR = 1 / rank of the first relevant
-doc (0 if none in the top 6). Slices: by query kind and by each domain the query targets.
+doc (0 if none in the top 6); Precision@6 = relevant docs among the 6 returned / 6 (what the
+report actually receives; it rises as the corpus gains relevant documents). Slices: by query kind and by each domain the query targets.
 """
 import argparse
 import collections
@@ -61,14 +62,15 @@ def score(ranked_keys: List[str], relevant: List[str]) -> Dict[str, float]:
     rel = set(relevant)
     hits = [k for k in ranked_keys[:K] if k in rel]
     rr = next((1.0 / (i + 1) for i, k in enumerate(ranked_keys[:K]) if k in rel), 0.0)
-    return {"recall": len(hits) / min(len(rel), K) if rel else 0.0, "rr": rr}
+    return {"recall": len(hits) / min(len(rel), K) if rel else 0.0, "rr": rr, "precision": len(hits) / K}
 
 
 def _agg(rows: List[Dict[str, float]]) -> Dict[str, float]:
     n = len(rows)
     return {"n": n,
             "recall@6": round(sum(r["recall"] for r in rows) / n, 4) if n else 0.0,
-            "mrr": round(sum(r["rr"] for r in rows) / n, 4) if n else 0.0}
+            "mrr": round(sum(r["rr"] for r in rows) / n, 4) if n else 0.0,
+            "precision@6": round(sum(r.get("precision", 0.0) for r in rows) / n, 4) if n else 0.0}
 
 
 def evaluate(eval_set: List[Dict[str, Any]], with_similarity_only: bool = False) -> Dict[str, Any]:
@@ -97,7 +99,7 @@ def evaluate(eval_set: List[Dict[str, Any]], with_similarity_only: bool = False)
         "store": rag_client.store,
         "table": rag_client.table,
         "corpus_docs": len(pipeline.SEED_DOCUMENTS),
-        "overall": _agg([{"recall": q["recall"], "rr": q["rr"]} for q in per_query]),
+        "overall": _agg([{"recall": q["recall"], "rr": q["rr"], "precision": q["precision"]} for q in per_query]),
         "by_kind": {k: _agg(v) for k, v in sorted(by_kind.items())},
         "by_domain": {k: _agg(v) for k, v in sorted(by_domain.items())},
         "queries": per_query,
@@ -123,7 +125,7 @@ def regressions(result: Dict[str, Any], baseline: Dict[str, Any]) -> List[str]:
 def print_report(r: Dict[str, Any]) -> None:
     print(f"\n== {r['model']}  (store={r['store']}, table={r['table']}, corpus={r['corpus_docs']} docs)")
     o = r["overall"]
-    print(f"   overall    n={o['n']:<3} Recall@6={o['recall@6']:.4f}  MRR={o['mrr']:.4f}")
+    print(f"   overall    n={o['n']:<3} Recall@6={o['recall@6']:.4f}  MRR={o['mrr']:.4f}  Precision@6={o['precision@6']:.4f}")
     for k, v in r["by_kind"].items():
         print(f"   {k:<14} n={v['n']:<3} Recall@6={v['recall@6']:.4f}  MRR={v['mrr']:.4f}")
     print("   by domain:")
