@@ -233,3 +233,8 @@ answers the query): `overall n=48 Recall@6=0.8104 MRR=0.9219 Precision@6=0.7361`
 
 Adds 9 sourced documents from AACAP Facts for Families: depression (parent signs, specialist risk factors and treatment), conduct disorder (parent, specialist), physical punishment and alternatives, when to seek help (young children, adolescents), and somatic symptoms of emotional distress (parent, school return). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8174 MRR=0.9219 Precision@6=0.7431`. Baseline re-recorded. Coverage: Gap list (19 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (34%), parent=138 (38%), specialist=44 (12%), teacher=61 (17%).
+
+## Corpus batch 18 (374 docs)
+
+Adds 7 sourced documents from AACAP Facts for Families: panic disorder (parent, specialist), trichotillomania, PTSD (parent signs, specialist early intervention), and bullying (parent of a bullied child, parent of a child who bullies). Two sleep documents were drafted and dropped because sleep is outside the platform's domains and one displaced a relevant result. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8174 MRR=0.9219 Precision@6=0.7431`. Baseline re-recorded. Coverage: Gap list (19 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (33%), parent=143 (38%), specialist=46 (12%), teacher=61 (16%).
