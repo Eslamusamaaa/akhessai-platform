@@ -183,3 +183,8 @@ answers the query): `overall n=48 Recall@6=0.8090 MRR=0.9010 Precision@6=0.6701`
 
 14 Arabic documents from live NHS pages read 2026-11-27: dyslexia (signs, assessment pathway, school and home support), selective mutism (what it is, parents' do's and don'ts, early-years staff, diagnosis and graded-exposure treatment, school-age difficulties), anxiety in children (signs by age, separation anxiety and common fears, triggers, home tools, school supports, anger as an anxiety sign). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8063 MRR=0.9010 Precision@6=0.6771`. Baseline re-recorded. Coverage: Gap list (33 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (45%), parent=85 (31%), specialist=27 (10%), teacher=38 (14%).
+
+## Corpus batch 8 (288 docs)
+
+14 Arabic documents from live sources read 2026-11-27: NHS signs of autism in children (communication, behaviour and play, sensory and eating differences, older children, masking in girls), NHS temper tantrums (why toddlers hit or bite, nursery strategies, common mistakes), Child Mind Institute teacher's guide to ADHD (boys vs girls, daily report card, transitions), language disorder quick guide (signs, home talk, classroom tips) and auditory processing strategies. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8076 MRR=0.9219 Precision@6=0.6875`. Baseline re-recorded. Coverage: Gap list (29 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (43%), parent=93 (32%), specialist=28 (10%), teacher=43 (15%).
