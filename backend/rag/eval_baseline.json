@@ -1,12 +1,12 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 248,
+  "corpus_docs": 260,
   "overall": {
     "n": 48,
-    "recall@6": 0.8132,
+    "recall@6": 0.809,
     "mrr": 0.901,
-    "precision@6": 0.6667
+    "precision@6": 0.6701
   },
   "by_kind": {
     "dialect": {
@@ -19,13 +19,13 @@
       "n": 21,
       "recall@6": 0.9048,
       "mrr": 0.9762,
-      "precision@6": 0.7857
+      "precision@6": 0.8016
     },
     "profile": {
       "n": 13,
-      "recall@6": 0.6872,
+      "recall@6": 0.6718,
       "mrr": 0.8654,
-      "precision@6": 0.6026
+      "precision@6": 0.5897
     },
     "specialist_obs": {
       "n": 9,
@@ -79,15 +79,15 @@
     },
     "hyperactivity": {
       "n": 2,
-      "recall@6": 0.8,
+      "recall@6": 0.7,
       "mrr": 1.0,
-      "precision@6": 0.5833
+      "precision@6": 0.5
     },
     "impulsivity": {
       "n": 2,
-      "recall@6": 0.8,
+      "recall@6": 0.7,
       "mrr": 1.0,
-      "precision@6": 0.5833
+      "precision@6": 0.5
     },
     "internalizing": {
       "n": 3,
@@ -115,15 +115,15 @@
     },
     "restricted_repetitive": {
       "n": 2,
-      "recall@6": 0.9167,
+      "recall@6": 0.8333,
       "mrr": 1.0,
-      "precision@6": 0.75
+      "precision@6": 0.8333
     },
     "sensory_reactivity": {
       "n": 3,
-      "recall@6": 0.7111,
+      "recall@6": 0.7667,
       "mrr": 0.6667,
-      "precision@6": 0.6667
+      "precision@6": 0.7222
     },
     "social_communication": {
       "n": 8,

@@ -173,3 +173,8 @@ anxiety query, and the typical-disfluency document in the intelligibility observ
 
 16 Arabic documents from live sources read 2026-11-27: ASHA childhood apraxia of speech and fluency disorders (stuttering, cluttering; parents, teachers, specialists), NIMH teen depression, WHO autism fact sheet (co-occurring conditions, causes and vaccines, caregiver training). Adds Precision@6 to evaluate.py (relevant docs among the 6 the report receives: 0.497 at 120 docs -> 0.667 at 248). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8132 MRR=0.9010 Precision@6=0.6667`. Baseline re-recorded. Coverage: Gap list (37 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (50%), parent=68 (27%), specialist=26 (10%), teacher=30 (12%).
+
+## Corpus batch 6 (260 docs)
+
+12 Arabic documents from live sources read 2026-11-27: NHS ADHD living-with advice (day planning, instructions, rewards, diet and sleep, school SENCO), NHS autism help with behaviour (routines, change, stimming, meltdowns, where to get help), Berkshire Healthcare NHS FT touch/tactile system (signs, home and classroom strategies), CDC bullying (definition, forms, consequences, school prevention, family role). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8090 MRR=0.9010 Precision@6=0.6701`. Baseline re-recorded. Coverage: Gap list (34 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (48%), parent=76 (29%), specialist=26 (10%), teacher=34 (13%).
