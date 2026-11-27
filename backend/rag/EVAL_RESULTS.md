@@ -132,3 +132,8 @@ The owner chose bge-m3 and asked to drop in-process models from the Vercel funct
 now embeds with `baai/bge-m3` via the OpenRouter embeddings API (`EMBEDDING_PROVIDER=openrouter`,
 tag `openrouter:baai/bge-m3`); `sentence-transformers` and `torch` moved to
 `requirements-local.txt` for offline experiments only.
+
+Measured on Neon (production branch, pgvector) after loading 190 documents with
+`openrouter:baai/bge-m3`: Recall@6 0.8566, MRR 0.9010 (MiniLM on the same corpus: 0.8208 / 0.9184).
+OpenRouter's bge-m3 vectors match local BAAI/bge-m3 (cosine 1.000 on test sentences); parity
+pgvector vs in-memory 52/52. `eval_baseline.json` re-recorded for this model.
