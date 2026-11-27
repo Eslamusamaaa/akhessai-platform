@@ -142,3 +142,8 @@ pgvector vs in-memory 52/52. `eval_baseline.json` re-recorded for this model.
 
 27 Arabic documents from live sources read 2026-11-27: NIMH autism publication (older children, screening schedule, family tips) and ADHD in children and teens (symptoms, diagnosis requirements, school supports, treatment options); ASHA Practice Portal speech sound disorders (incl. dialect is not a disorder) and spoken language disorders (school-age comprehension, assessment of bilingual/dialect speakers, language screening in behavior referrals). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8517 MRR=0.9115`. Baseline re-recorded. Coverage: Gap list (37 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=123 (57%), parent=48 (22%), specialist=21 (10%), teacher=25 (12%).
+
+## Corpus batch 4 (232 docs)
+
+15 Arabic documents from live sources read 2026-11-27: Berkshire Healthcare NHS FT vestibular and proprioception guidance (signs, home and classroom movement / heavy-work activities), AAP temper tantrums (why, prevention, during a tantrum), CDC preschool parenting and safety, NIMH anxiety disorders. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8434 MRR=0.9010`. Baseline re-recorded. Coverage: Gap list (37 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (53%), parent=59 (25%), specialist=21 (9%), teacher=28 (12%).
