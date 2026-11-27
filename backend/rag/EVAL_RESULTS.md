@@ -94,3 +94,20 @@ re-measured after corpus batch 1; the decision is recorded here when made.
 Operational note: bge-m3 is a 568M-parameter model (~2.2 GB of weights). It runs on CPU, but on
 Vercel it lengthens cold starts and needs the large-function allowance; if that is a problem, the
 optional standalone retrieval service from the plan is the fallback.
+
+## Corpus batch 1 (160 docs) — accepted small regression
+
+Batch 1 adds 40 sourced documents (safety cluster, 0-6 gaps, first teacher/specialist
+documents). Eval labels were extended only where a new document directly answers the query,
+and Recall@6 now counts only labelled docs present in the corpus with the denominator capped
+at 6.
+
+| Model | Recall@6 (120 docs) | Recall@6 (160 docs) | MRR (120) | MRR (160) |
+|---|---|---|---|---|
+| MiniLM (default) | 0.8608 | 0.8378 | 0.8507 | **0.8924** |
+| bge-m3 | 0.9024 | 0.8583 | 0.8819 | 0.8715 |
+
+Recall@6 dropped 2.3 points with MiniLM (MRR rose 4.2 points): a few broad new documents
+(mainly autism-035, the diagnosis overview) outrank more specific legacy ones on 4 queries.
+The owner accepted this regression on 2026-11-27 in exchange for the new coverage, and
+`eval_baseline.json` was re-recorded at 160 docs; later batches are gated against it.
