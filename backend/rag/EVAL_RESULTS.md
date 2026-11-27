@@ -208,3 +208,8 @@ answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7118`
 
 Adds 11 sourced ADHD and executive-function documents (Harvard Center on the Developing Child activity guide, Child Mind Institute ADHD guide, CDC behavior therapy and classroom pages, AAP HealthyChildren), targeting attention/impulsivity/hyperactivity 0-6 and 6-18 and executive_function 0-6. Two drafts were dropped as near-duplicates of existing CDC docs. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8028 MRR=0.9219 Precision@6=0.7153`. Baseline re-recorded. Coverage: Gap list (26 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (38%), parent=111 (34%), specialist=36 (11%), teacher=53 (16%).
+
+## Corpus batch 13 (334 docs)
+
+Adds 10 sourced documents: ASHA communication milestones (2-5 years: understanding, talking, sound acquisition) and NHS children's therapy sensory guidance (Somerset proprioception, Gateshead sensory circuits and deep pressure, Sandwell vestibular), targeting receptive language 0-6 and proprioceptive/vestibular 6-18. One dialect query lost a labelled doc to an adjacent-age language doc; overall precision rose. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7257`. Baseline re-recorded. Coverage: Gap list (23 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (37%), parent=117 (35%), specialist=37 (11%), teacher=56 (17%).

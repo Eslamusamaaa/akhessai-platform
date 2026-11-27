@@ -1,31 +1,31 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 324,
+  "corpus_docs": 334,
   "overall": {
     "n": 48,
-    "recall@6": 0.8028,
+    "recall@6": 0.8097,
     "mrr": 0.9219,
-    "precision@6": 0.7153
+    "precision@6": 0.7257
   },
   "by_kind": {
     "dialect": {
       "n": 5,
-      "recall@6": 0.7133,
+      "recall@6": 0.6733,
       "mrr": 0.9,
-      "precision@6": 0.5667
+      "precision@6": 0.5333
     },
     "domain": {
       "n": 21,
-      "recall@6": 0.8857,
+      "recall@6": 0.8952,
       "mrr": 0.9762,
-      "precision@6": 0.8413
+      "precision@6": 0.8571
     },
     "profile": {
       "n": 13,
-      "recall@6": 0.6846,
+      "recall@6": 0.7103,
       "mrr": 0.8654,
-      "precision@6": 0.6282
+      "precision@6": 0.6538
     },
     "specialist_obs": {
       "n": 9,
@@ -67,9 +67,9 @@
     },
     "expressive_language": {
       "n": 4,
-      "recall@6": 0.825,
+      "recall@6": 0.775,
       "mrr": 1.0,
-      "precision@6": 0.6667
+      "precision@6": 0.625
     },
     "externalizing": {
       "n": 2,
@@ -103,9 +103,9 @@
     },
     "proprioceptive": {
       "n": 2,
-      "recall@6": 0.65,
+      "recall@6": 0.9167,
       "mrr": 1.0,
-      "precision@6": 0.5833
+      "precision@6": 0.9167
     },
     "receptive_language": {
       "n": 2,
@@ -133,9 +133,9 @@
     },
     "vestibular": {
       "n": 2,
-      "recall@6": 0.75,
+      "recall@6": 0.9167,
       "mrr": 0.75,
-      "precision@6": 0.6667
+      "precision@6": 0.8333
     }
   }
 }
