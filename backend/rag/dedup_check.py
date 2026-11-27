@@ -1,4 +1,4 @@
-"""Near-duplicate detection over rag/corpus.jsonl.
+"""Near-duplicate detection over rag_data/documents/corpus.jsonl.
 
     python -m rag.dedup_check                  # report; writes rag/dedup_review.jsonl
     python -m rag.dedup_check --strict         # exit 1 on any reject or unresolved review pair

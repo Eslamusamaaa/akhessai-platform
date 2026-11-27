@@ -46,12 +46,10 @@ def _id_to_key() -> Dict[int, str]:
 def similarity_only(query: str, k: int = K) -> List[int]:
     """Same scoring as the shipped path (cosine + 0.05 goals/strategy) over ALL docs, no filter."""
     q = np.array(pipeline.get_text_embedding(query), dtype=float)
+    vecs = pipeline.document_vectors()
     scored = []
     for d in pipeline.SEED_DOCUMENTS:
-        if d["id"] not in pipeline._DOC_EMBEDDINGS_CACHE:
-            pipeline._DOC_EMBEDDINGS_CACHE[d["id"]] = np.array(
-                pipeline.get_text_embedding(pipeline.document_text(d), kind="passage"), dtype=float)
-        s = float(np.dot(q, pipeline._DOC_EMBEDDINGS_CACHE[d["id"]]))
+        s = float(np.dot(q, vecs[d["doc_key"]]))
         if d["category"] in ("goals", "strategy"):
             s += 0.05
         scored.append((s, d["id"]))

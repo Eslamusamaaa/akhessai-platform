@@ -1,6 +1,6 @@
 # RAG retrieval bake-off — embedding models
 
-Date: 2026-11-27 · Corpus: the 120 legacy documents (`rag/corpus.jsonl`) · Eval set: 48 Arabic
+Date: 2026-11-27 · Corpus: the 120 legacy documents (`rag_data/documents/corpus.jsonl`) · Eval set: 48 Arabic
 queries (`rag/eval_set.jsonl`) · Metric: Recall@6 and MRR through the shipped
 `search_guidelines` path (metadata filter + cosine + 0.05 goals/strategy boost), on a local
 Postgres 16 + pgvector (Docker), same corpus and same SQL for every model.
@@ -125,3 +125,10 @@ integration). Labels extended only where a new document directly answers the que
 
 Recall@6 dipped 1.7 points with MiniLM while MRR rose 2.6 points; accepted under the owner's
 "accept small regressions" decision of 2026-11-27, baseline re-recorded at 190 docs.
+
+## Decision: bge-m3 through the OpenRouter API (2026-11-27)
+
+The owner chose bge-m3 and asked to drop in-process models from the Vercel function. Production
+now embeds with `baai/bge-m3` via the OpenRouter embeddings API (`EMBEDDING_PROVIDER=openrouter`,
+tag `openrouter:baai/bge-m3`); `sentence-transformers` and `torch` moved to
+`requirements-local.txt` for offline experiments only.

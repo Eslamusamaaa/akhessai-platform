@@ -6,9 +6,12 @@ import numpy as np
 from config import settings
 from rag import db as ragdb
 
-# ── Semantic Embedding (sentence-transformers) ─────────────────────────────────
+# ── Semantic Embedding ─────────────────────────────────────────────────────────
+# Provider: settings.EMBEDDING_PROVIDER
+#   "openrouter" (default) → OpenRouter /embeddings API, no model weights in the server
+#   "local"                → sentence-transformers in-process (bake-offs; requirements-local.txt)
 # Model: settings.EMBEDDING_MODEL (switchable without code changes):
-#   BAAI/bge-m3                              → 1024 dims, no prefixes
+#   baai/bge-m3 (OpenRouter) / BAAI/bge-m3   → 1024 dims, no prefixes
 #   intfloat/multilingual-e5-large-instruct  → 1024 dims, instruction on queries
 #   intfloat/multilingual-e5-*               → "query: " / "passage: " prefixes
 #   paraphrase-multilingual-MiniLM-L12-v2    → 384 dims (previous default)
@@ -26,29 +29,72 @@ def _prefix(text: str, kind: str) -> str:
         return f"Instruct: {E5_INSTRUCT_TASK}\nQuery: {text}" if kind == "query" else text
     return f"{kind}: {text}"                         # classic e5: "query: " / "passage: "
 
-_st_model = None
+_st_model = None          # the active embedder (OpenRouter API client or sentence-transformers model)
 _st_checked = False
 _st_available = False
 _DOC_EMBEDDINGS_CACHE: Dict[str, Any] = {}
 
 
+class OpenRouterEmbedder:
+    """Embeddings over the OpenRouter API (OpenAI-compatible /embeddings endpoint).
+    Mirrors the small part of the SentenceTransformer interface the pipeline uses, so no model
+    weights (and no torch) are needed in the serving process."""
+
+    def __init__(self, model: str, api_key: str, url: str, timeout: float = 20.0):
+        self.model, self.api_key, self.url, self.timeout = model, api_key, url, timeout
+        self._dim = None
+
+    def encode(self, texts, batch_size: int = 64, normalize_embeddings: bool = True, show_progress_bar: bool = False):
+        import requests
+        single = isinstance(texts, str)
+        items = [texts] if single else list(texts)
+        out = []
+        for i in range(0, len(items), batch_size):
+            batch = items[i:i + batch_size]
+            resp = requests.post(
+                self.url,
+                headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+                json={"model": self.model, "input": batch},
+                timeout=self.timeout,
+            )
+            resp.raise_for_status()
+            data = sorted(resp.json()["data"], key=lambda d: d.get("index", 0))
+            if len(data) != len(batch):
+                raise RuntimeError(f"OpenRouter returned {len(data)} embeddings for {len(batch)} inputs")
+            out.extend(d["embedding"] for d in data)
+        arr = np.array(out, dtype=float)
+        if normalize_embeddings:
+            norms = np.linalg.norm(arr, axis=1, keepdims=True)
+            arr = arr / np.where(norms == 0, 1.0, norms)
+        return arr[0] if single else arr
+
+    def get_embedding_dimension(self) -> int:
+        if self._dim is None:
+            self._dim = int(self.encode("probe").shape[0])
+        return self._dim
+
+
 def _try_load_st():
-    """Load sentence-transformers model once. Returns model or None."""
+    """Load the configured embedder once. Returns it, or None (keyword fallback)."""
     global _st_model, _st_checked, _st_available
     if _st_checked:
         return _st_model
     _st_checked = True
+    model_name = settings.EMBEDDING_MODEL
     try:
-        from sentence_transformers import SentenceTransformer
-        model_name = settings.EMBEDDING_MODEL
-        _st_model = SentenceTransformer(model_name)
+        if settings.EMBEDDING_PROVIDER == "openrouter":
+            if not settings.OPENROUTER_API_KEY:
+                raise RuntimeError("OPENROUTER_API_KEY is not set")
+            _st_model = OpenRouterEmbedder(model_name, settings.OPENROUTER_API_KEY, settings.OPENROUTER_EMBEDDINGS_URL)
+            print(f"[RAG] Embeddings via OpenRouter API: {model_name}")
+        else:
+            from sentence_transformers import SentenceTransformer
+            _st_model = SentenceTransformer(model_name)
+            getter = getattr(_st_model, "get_embedding_dimension", None) or getattr(_st_model, "get_sentence_embedding_dimension", None)
+            print(f"[RAG] Local sentence-transformers embedding: {model_name} ({getter() if getter else '?'} dims)")
         _st_available = True
-        # resolve dim without triggering the deprecated method name
-        getter = getattr(_st_model, "get_embedding_dimension", None) or getattr(_st_model, "get_sentence_embedding_dimension", None)
-        dim = getter() if getter else 384
-        print(f"[RAG] Semantic embedding active: {model_name} ({dim} dims)")
     except Exception as e:
-        print(f"[RAG] sentence-transformers not available -> keyword fallback. ({e})")
+        print(f"[RAG] Embedding model unavailable -> keyword/full-text fallback. ({e})")
         _st_model = None
         _st_available = False
     return _st_model
@@ -58,7 +104,6 @@ def get_embedding_dim() -> int:
     model = _try_load_st()
     if not model:
         return 192
-    # get_embedding_dimension is the current name; fall back to old name if needed
     getter = getattr(model, "get_embedding_dimension", None) or getattr(model, "get_sentence_embedding_dimension", None)
     return getter() if getter else 384
 
@@ -72,7 +117,7 @@ def get_text_embedding(text: str, kind: str = "query") -> List[float]:
 
 
 def get_text_embeddings(texts: List[str], batch_size: int = 32, kind: str = "passage") -> List[List[float]]:
-    """Batch form of get_text_embedding (one encode() call per batch; used by ingestion)."""
+    """Batch form of get_text_embedding (used by ingestion and evaluation)."""
     model = _try_load_st()
     if model:
         raw = model.encode([_prefix(t, kind) for t in texts], batch_size=batch_size, normalize_embeddings=True,
@@ -82,7 +127,7 @@ def get_text_embeddings(texts: List[str], batch_size: int = 32, kind: str = "pas
 
 
 def semantic_model_available() -> bool:
-    """True when a sentence-transformers model is loaded (not the keyword fallback)."""
+    """True when an embedding model is configured and loaded (not the keyword fallback)."""
     return _try_load_st() is not None
 
 
@@ -132,12 +177,49 @@ def _keyword_embedding(text: str) -> List[float]:
     return arr.tolist()
 
 
-# ── Seed Documents (120 clinical guidelines, loaded from corpus.jsonl) ────────
+# ── Seed Documents (loaded from rag_data/documents/corpus.jsonl) ───────────────
 # The corpus is versioned data, not code: one JSON record per line in
-# rag/corpus.jsonl. SEED_DOCUMENTS keeps its original name and record shape
+# backend/rag_data/documents/corpus.jsonl. Precomputed document vectors live next to it in
+# backend/rag_data/embeddings/<embedding tag>.jsonl (written by `python -m rag.ingest`).
+# SEED_DOCUMENTS keeps its original name and record shape
 # (id, title, specialty_tag, domain_tag, age_band, category, content, ...).
 
-CORPUS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "corpus.jsonl")
+RAG_DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "rag_data")
+CORPUS_PATH = os.path.join(RAG_DATA_DIR, "documents", "corpus.jsonl")
+EMBEDDINGS_DIR = os.path.join(RAG_DATA_DIR, "embeddings")
+
+
+def embeddings_path(tag: str = None) -> str:
+    """File holding precomputed vectors for an embedding tag (e.g. openrouter:baai/bge-m3)."""
+    safe = "".join(c if c.isalnum() or c in "-._" else "_" for c in (tag or settings.EMBEDDING_VERSION))
+    return os.path.join(EMBEDDINGS_DIR, f"{safe}.jsonl")
+
+
+def document_vectors() -> Dict[str, Any]:
+    """doc_key -> normalised vector for every SEED_DOCUMENT with the active model.
+    Uses the committed embeddings file when present, embeds only what is missing (one batch)."""
+    cache = _DOC_EMBEDDINGS_CACHE.setdefault("model", {})
+    if not cache:
+        cache.update(load_precomputed_vectors())
+    missing = [d for d in SEED_DOCUMENTS if d["doc_key"] not in cache]
+    if missing:
+        vecs = get_text_embeddings([document_text(d) for d in missing], kind="passage")
+        cache.update({d["doc_key"]: np.array(v, dtype=float) for d, v in zip(missing, vecs)})
+    return cache
+
+
+def load_precomputed_vectors(tag: str = None) -> Dict[str, Any]:
+    """doc_key -> vector (chunk 0) from the committed embeddings file, if present."""
+    path = embeddings_path(tag)
+    out: Dict[str, Any] = {}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    r = json.loads(line)
+                    if r.get("chunk_index", 0) == 0:
+                        out[r["doc_key"]] = np.array(r["embedding"], dtype=float)
+    return out
 
 
 def load_corpus(path: str = CORPUS_PATH) -> List[Dict[str, Any]]:
@@ -262,11 +344,18 @@ class VectorStoreClient:
             "age_band": age_band,
             "limit": limit,
         }
+        q_vec = None
         if semantic_model_available():
+            try:
+                q_vec = get_text_embedding(query)
+            except Exception as e:  # e.g. the embeddings API is down or slow
+                print(f"[RAG] Query embedding failed ({e}) -> Postgres full-text fallback.")
+        if q_vec is not None:
             sql = _VECTOR_SQL.format(table=self.table)
-            params["q"] = ragdb.vector_literal(get_text_embedding(query))
+            params["q"] = ragdb.vector_literal(q_vec)
         else:
-            print("[RAG] Embedding model unavailable -> Postgres full-text fallback.")
+            if not semantic_model_available():
+                print("[RAG] Embedding model unavailable -> Postgres full-text fallback.")
             sql = _FTS_SQL.format(table=self.table)
             params["q"] = _or_query(query)
 
@@ -292,7 +381,22 @@ class VectorStoreClient:
         Both query and doc vectors are L2-normalised, so dot-product = cosine.
         Selected with RAG_STORE=memory (tests) and used as the fallback path.
         """
-        q_vec = np.array(get_text_embedding(query), dtype=float)
+        use_model = semantic_model_available()
+        try:
+            q_vec = np.array(get_text_embedding(query), dtype=float)
+        except Exception as e:  # embeddings API down: degrade to the keyword vector for query and docs
+            print(f"[RAG] Query embedding failed ({e}) -> keyword fallback in memory.")
+            use_model = False
+            q_vec = np.array(_keyword_embedding(query), dtype=float)
+        if use_model:
+            try:
+                cache = document_vectors()              # committed vectors: no per-doc API calls
+            except Exception as e:
+                print(f"[RAG] Document embeddings unavailable ({e}) -> keyword fallback in memory.")
+                use_model = False
+                q_vec = np.array(_keyword_embedding(query), dtype=float)
+        if not use_model:
+            cache = _DOC_EMBEDDINGS_CACHE.setdefault("keyword", {})
         scored = []
 
         for doc in SEED_DOCUMENTS:
@@ -303,12 +407,13 @@ class VectorStoreClient:
             if domains and doc["domain_tag"] not in domains:
                 continue
 
-            doc_id = doc["id"]
-            if doc_id not in _DOC_EMBEDDINGS_CACHE:
-                _DOC_EMBEDDINGS_CACHE[doc_id] = np.array(
-                    get_text_embedding(document_text(doc), kind="passage"), dtype=float
+            key = doc["doc_key"]
+            if key not in cache:
+                cache[key] = np.array(
+                    get_text_embedding(document_text(doc), kind="passage") if use_model
+                    else _keyword_embedding(document_text(doc)), dtype=float
                 )
-            d_vec = _DOC_EMBEDDINGS_CACHE[doc_id]
+            d_vec = cache[key]
             score = float(np.dot(q_vec, d_vec))
             if doc["category"] in ("goals", "strategy"):
                 score += 0.05          # small actionability boost

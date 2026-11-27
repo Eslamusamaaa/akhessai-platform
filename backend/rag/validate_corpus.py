@@ -1,4 +1,4 @@
-"""Validate rag/corpus.jsonl records before they are loaded.
+"""Validate rag_data/documents/corpus.jsonl records before they are loaded.
 
     python -m rag.validate_corpus                # all checks (ingestion runs the same ones)
 

@@ -62,10 +62,14 @@ class Settings:
     DEMO_PASSWORD: str = os.getenv("DEMO_PASSWORD", "")
 
     LLM_MODEL: str = os.getenv("LLM_MODEL", "google/gemini-2.5-flash")
-    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "paraphrase-multilingual-MiniLM-L12-v2")
+    # Embeddings: "openrouter" (default; API, no model weights on the server) or "local"
+    # (sentence-transformers in-process, for offline bake-offs: pip install -r requirements-local.txt).
+    EMBEDDING_PROVIDER: str = os.getenv("EMBEDDING_PROVIDER", "openrouter").lower()
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "baai/bge-m3")
+    OPENROUTER_EMBEDDINGS_URL: str = os.getenv("OPENROUTER_EMBEDDINGS_URL", "https://openrouter.ai/api/v1/embeddings")
     # Tag stored on every rag_documents row (embedding_model column); rows are only
     # comparable with queries embedded by the same model, so search filters on it.
-    EMBEDDING_VERSION: str = os.getenv("EMBEDDING_VERSION") or EMBEDDING_MODEL
+    EMBEDDING_VERSION: str = os.getenv("EMBEDDING_VERSION") or f"{EMBEDDING_PROVIDER}:{EMBEDDING_MODEL}"
 
 
 if len(Settings.JWT_SECRET) < 32:

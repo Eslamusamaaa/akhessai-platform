@@ -36,19 +36,20 @@ def keyword_embedder(monkeypatch):
 
 # ── Corpus file ────────────────────────────────────────────────────────────────
 
-def test_corpus_has_all_120_legacy_docs():
+def test_corpus_keeps_all_120_legacy_docs():
     lines = [l for l in open(pipeline.CORPUS_PATH, encoding="utf-8") if l.strip()]
     recs = [json.loads(l) for l in lines]
-    assert len(recs) == 120
-    assert sorted(r["id"] for r in recs) == list(range(1, 121))
-    assert len(pipeline.SEED_DOCUMENTS) == 120
-    assert len({r["doc_key"] for r in recs}) == 120
+    legacy = [r for r in recs if r.get("legacy")]
+    assert sorted(r["id"] for r in legacy) == list(range(1, 121))
+    assert len(pipeline.SEED_DOCUMENTS) == len(recs) >= 120
+    assert len({r["doc_key"] for r in recs}) == len(recs)
+    assert len({r["id"] for r in recs}) == len(recs)
 
 
 def test_corpus_validates():
     valid, failures = vc.validate(vc.load_jsonl(pipeline.CORPUS_PATH))
     assert failures == []
-    assert len(valid) == 120
+    assert len(valid) == len(pipeline.SEED_DOCUMENTS)
 
 
 def test_validator_rejects_bad_records():
@@ -270,8 +271,8 @@ def test_coverage_report_lists_known_gaps():
     for dom in ("receptive_language", "impulsivity", "hyperactivity", "articulation",
                 "vestibular", "proprioceptive", "externalizing"):
         assert any(d == dom for d, _, _ in gap_cells), dom
-    assert ("executive_function", "0-6", "parent") in gap_cells
-    assert cov.dedicated_audience_counts(recs) == {"all": 120}   # no teacher/specialist docs yet
+    legacy = [r for r in recs if r.get("legacy")]
+    assert cov.dedicated_audience_counts(legacy) == {"all": 120}   # legacy docs carry no audience
 
 
 def test_demand_report_is_read_only_and_ranked():

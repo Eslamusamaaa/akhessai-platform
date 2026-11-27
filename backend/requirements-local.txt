@@ -1,0 +1,6 @@
+# Optional: local embedding models (EMBEDDING_PROVIDER=local) for offline bake-offs and
+# evaluation. Not needed in production, which embeds through the OpenRouter API.
+#   pip install -r requirements.txt -r requirements-local.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+sentence-transformers>=2.7.0   # bge-m3 support; verified with 5.6.1 on CPU
+torch==2.5.1+cpu
