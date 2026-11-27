@@ -10,3 +10,4 @@ cryptography==42.0.5
 pyyaml==6.0.1
 pydantic==2.6.4
 requests==2.31.0
+numpy>=1.26,<3
