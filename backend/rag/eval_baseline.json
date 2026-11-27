@@ -1,119 +1,141 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 232,
+  "corpus_docs": 248,
   "overall": {
     "n": 48,
-    "recall@6": 0.8434,
-    "mrr": 0.901
+    "recall@6": 0.8132,
+    "mrr": 0.901,
+    "precision@6": 0.6667
   },
   "by_kind": {
     "dialect": {
       "n": 5,
-      "recall@6": 0.79,
-      "mrr": 0.9
+      "recall@6": 0.74,
+      "mrr": 0.8,
+      "precision@6": 0.5333
     },
     "domain": {
       "n": 21,
-      "recall@6": 0.9397,
-      "mrr": 0.9762
+      "recall@6": 0.9048,
+      "mrr": 0.9762,
+      "precision@6": 0.7857
     },
     "profile": {
       "n": 13,
-      "recall@6": 0.7,
-      "mrr": 0.8654
+      "recall@6": 0.6872,
+      "mrr": 0.8654,
+      "precision@6": 0.6026
     },
     "specialist_obs": {
       "n": 9,
-      "recall@6": 0.8556,
-      "mrr": 0.7778
+      "recall@6": 0.8222,
+      "mrr": 0.8333,
+      "precision@6": 0.5556
     }
   },
   "by_domain": {
     "academic_skills": {
       "n": 6,
       "recall@6": 0.8111,
-      "mrr": 0.875
+      "mrr": 0.875,
+      "precision@6": 0.75
     },
     "articulation": {
       "n": 5,
-      "recall@6": 0.91,
-      "mrr": 0.9
+      "recall@6": 0.7133,
+      "mrr": 0.9,
+      "precision@6": 0.6667
     },
     "attention": {
       "n": 6,
       "recall@6": 0.7167,
-      "mrr": 0.875
+      "mrr": 0.875,
+      "precision@6": 0.5833
     },
     "emotional_regulation": {
       "n": 4,
       "recall@6": 1.0,
-      "mrr": 0.875
+      "mrr": 0.875,
+      "precision@6": 0.625
     },
     "executive_function": {
       "n": 3,
       "recall@6": 0.7333,
-      "mrr": 0.75
+      "mrr": 0.75,
+      "precision@6": 0.6667
     },
     "expressive_language": {
       "n": 4,
       "recall@6": 0.7833,
-      "mrr": 0.875
+      "mrr": 0.875,
+      "precision@6": 0.5833
     },
     "externalizing": {
       "n": 2,
       "recall@6": 1.0,
-      "mrr": 1.0
+      "mrr": 1.0,
+      "precision@6": 0.6667
     },
     "hyperactivity": {
       "n": 2,
       "recall@6": 0.8,
-      "mrr": 1.0
+      "mrr": 1.0,
+      "precision@6": 0.5833
     },
     "impulsivity": {
       "n": 2,
       "recall@6": 0.8,
-      "mrr": 1.0
+      "mrr": 1.0,
+      "precision@6": 0.5833
     },
     "internalizing": {
       "n": 3,
-      "recall@6": 0.8222,
-      "mrr": 1.0
+      "recall@6": 0.7,
+      "mrr": 1.0,
+      "precision@6": 0.6667
     },
     "pragmatic_language": {
       "n": 4,
-      "recall@6": 0.9167,
-      "mrr": 1.0
+      "recall@6": 0.875,
+      "mrr": 1.0,
+      "precision@6": 0.7083
     },
     "proprioceptive": {
       "n": 2,
       "recall@6": 0.65,
-      "mrr": 1.0
+      "mrr": 1.0,
+      "precision@6": 0.5833
     },
     "receptive_language": {
       "n": 2,
       "recall@6": 0.75,
-      "mrr": 1.0
+      "mrr": 1.0,
+      "precision@6": 0.75
     },
     "restricted_repetitive": {
       "n": 2,
       "recall@6": 0.9167,
-      "mrr": 1.0
+      "mrr": 1.0,
+      "precision@6": 0.75
     },
     "sensory_reactivity": {
       "n": 3,
       "recall@6": 0.7111,
-      "mrr": 0.6667
+      "mrr": 0.6667,
+      "precision@6": 0.6667
     },
     "social_communication": {
       "n": 8,
-      "recall@6": 0.7125,
-      "mrr": 0.8125
+      "recall@6": 0.7,
+      "mrr": 0.8125,
+      "precision@6": 0.5625
     },
     "vestibular": {
       "n": 2,
       "recall@6": 0.75,
-      "mrr": 0.75
+      "mrr": 0.75,
+      "precision@6": 0.6667
     }
   }
 }

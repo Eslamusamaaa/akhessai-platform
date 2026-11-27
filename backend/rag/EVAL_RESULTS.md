@@ -147,3 +147,29 @@ answers the query): `overall n=48 Recall@6=0.8517 MRR=0.9115`. Baseline re-recor
 
 15 Arabic documents from live sources read 2026-11-27: Berkshire Healthcare NHS FT vestibular and proprioception guidance (signs, home and classroom movement / heavy-work activities), AAP temper tantrums (why, prevention, during a tantrum), CDC preschool parenting and safety, NIMH anxiety disorders. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8434 MRR=0.9010`. Baseline re-recorded. Coverage: Gap list (37 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (53%), parent=59 (25%), specialist=21 (9%), teacher=28 (12%).
+
+## Precision@6 — what the report actually receives
+
+Recall@6 is computed against relevance labels that keep growing as relevant documents are added,
+so it can fall even when the top 6 get better (a query that had 4 relevant docs, all retrieved,
+scores 1.0; after 3 more relevant docs are added, retrieving 5 of 7 scores 0.83). Precision@6
+(relevant docs among the 6 returned) measures what the report generator receives. Same eval set,
+openrouter:baai/bge-m3, labels as of batch 5:
+
+| Corpus | Recall@6 | MRR | Precision@6 |
+|---|---|---|---|
+| 120 (legacy) | 0.902 | 0.882 | 0.497 |
+| 160 | 0.866 | 0.872 | 0.569 |
+| 190 | 0.857 | 0.903 | 0.622 |
+| 217 | 0.852 | 0.912 | 0.649 |
+| 232 | 0.842 | 0.903 | 0.660 |
+| 248 | 0.815 | 0.901 | 0.667 |
+
+Real regressions seen in batch 5 (a new, less relevant document outranking a relevant one): the
+cluttering document in stuttering/articulation queries, the teacher depression document in the
+anxiety query, and the typical-disfluency document in the intelligibility observation query.
+
+## Corpus batch 5 (248 docs)
+
+16 Arabic documents from live sources read 2026-11-27: ASHA childhood apraxia of speech and fluency disorders (stuttering, cluttering; parents, teachers, specialists), NIMH teen depression, WHO autism fact sheet (co-occurring conditions, causes and vaccines, caregiver training). Adds Precision@6 to evaluate.py (relevant docs among the 6 the report receives: 0.497 at 120 docs -> 0.667 at 248). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8132 MRR=0.9010 Precision@6=0.6667`. Baseline re-recorded. Coverage: Gap list (37 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (50%), parent=68 (27%), specialist=26 (10%), teacher=30 (12%).
