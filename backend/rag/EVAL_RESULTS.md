@@ -188,3 +188,8 @@ answers the query): `overall n=48 Recall@6=0.8063 MRR=0.9010 Precision@6=0.6771`
 
 14 Arabic documents from live sources read 2026-11-27: NHS signs of autism in children (communication, behaviour and play, sensory and eating differences, older children, masking in girls), NHS temper tantrums (why toddlers hit or bite, nursery strategies, common mistakes), Child Mind Institute teacher's guide to ADHD (boys vs girls, daily report card, transitions), language disorder quick guide (signs, home talk, classroom tips) and auditory processing strategies. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8076 MRR=0.9219 Precision@6=0.6875`. Baseline re-recorded. Coverage: Gap list (29 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (43%), parent=93 (32%), specialist=28 (10%), teacher=43 (15%).
+
+## Corpus batch 9 (298 docs)
+
+10 Arabic documents from Child Mind Institute guides read 2026-11-27: anxiety in the classroom (how it looks, outbursts driven by fear), oppositional defiant disorder (signs and duration, parent-training programs, specialist assessment), dysgraphia (signs, evaluation and accommodations), speech sound disorder (classroom support, home modelling, voice and oral-motor red flags). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7083`. Baseline re-recorded. Coverage: Gap list (27 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (42%), parent=97 (33%), specialist=31 (10%), teacher=46 (15%).
