@@ -7,8 +7,24 @@ from config import settings
 from rag import db as ragdb
 
 # ── Semantic Embedding (sentence-transformers) ─────────────────────────────────
-# Primary: paraphrase-multilingual-MiniLM-L12-v2  → 384 dims, supports Arabic
-# Fallback: keyword-frequency vector              → 192 dims (no extra deps)
+# Model: settings.EMBEDDING_MODEL (switchable without code changes):
+#   BAAI/bge-m3                              → 1024 dims, no prefixes
+#   intfloat/multilingual-e5-large-instruct  → 1024 dims, instruction on queries
+#   intfloat/multilingual-e5-*               → "query: " / "passage: " prefixes
+#   paraphrase-multilingual-MiniLM-L12-v2    → 384 dims (previous default)
+# Fallback: keyword-frequency vector         → 192 dims (no extra deps)
+
+E5_INSTRUCT_TASK = "Given a clinical question about a child, retrieve relevant clinical guideline passages"
+
+
+def _prefix(text: str, kind: str) -> str:
+    """Model-specific input prefix. kind is "query" (search text) or "passage" (a document)."""
+    name = (settings.EMBEDDING_MODEL or "").lower()
+    if "e5" not in name:
+        return text                                  # bge-m3 / MiniLM: no prefixes
+    if "instruct" in name:                           # e5-*-instruct: instruction on queries only
+        return f"Instruct: {E5_INSTRUCT_TASK}\nQuery: {text}" if kind == "query" else text
+    return f"{kind}: {text}"                         # classic e5: "query: " / "passage: "
 
 _st_model = None
 _st_checked = False
@@ -47,19 +63,19 @@ def get_embedding_dim() -> int:
     return getter() if getter else 384
 
 
-def get_text_embedding(text: str) -> List[float]:
+def get_text_embedding(text: str, kind: str = "query") -> List[float]:
     model = _try_load_st()
     if model:
-        vec = model.encode(text, normalize_embeddings=True, show_progress_bar=False)
+        vec = model.encode(_prefix(text, kind), normalize_embeddings=True, show_progress_bar=False)
         return vec.tolist()
     return _keyword_embedding(text)
 
 
-def get_text_embeddings(texts: List[str], batch_size: int = 32) -> List[List[float]]:
+def get_text_embeddings(texts: List[str], batch_size: int = 32, kind: str = "passage") -> List[List[float]]:
     """Batch form of get_text_embedding (one encode() call per batch; used by ingestion)."""
     model = _try_load_st()
     if model:
-        raw = model.encode(texts, batch_size=batch_size, normalize_embeddings=True,
+        raw = model.encode([_prefix(t, kind) for t in texts], batch_size=batch_size, normalize_embeddings=True,
                            show_progress_bar=len(texts) > batch_size)
         return [v.tolist() for v in raw]
     return [_keyword_embedding(t) for t in texts]
@@ -290,7 +306,7 @@ class VectorStoreClient:
             doc_id = doc["id"]
             if doc_id not in _DOC_EMBEDDINGS_CACHE:
                 _DOC_EMBEDDINGS_CACHE[doc_id] = np.array(
-                    get_text_embedding(document_text(doc)), dtype=float
+                    get_text_embedding(document_text(doc), kind="passage"), dtype=float
                 )
             d_vec = _DOC_EMBEDDINGS_CACHE[doc_id]
             score = float(np.dot(q_vec, d_vec))
