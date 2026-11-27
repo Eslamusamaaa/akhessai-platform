@@ -137,3 +137,8 @@ Measured on Neon (production branch, pgvector) after loading 190 documents with
 `openrouter:baai/bge-m3`: Recall@6 0.8566, MRR 0.9010 (MiniLM on the same corpus: 0.8208 / 0.9184).
 OpenRouter's bge-m3 vectors match local BAAI/bge-m3 (cosine 1.000 on test sentences); parity
 pgvector vs in-memory 52/52. `eval_baseline.json` re-recorded for this model.
+
+## Corpus batch 3 (217 docs)
+
+27 Arabic documents from live sources read 2026-11-27: NIMH autism publication (older children, screening schedule, family tips) and ADHD in children and teens (symptoms, diagnosis requirements, school supports, treatment options); ASHA Practice Portal speech sound disorders (incl. dialect is not a disorder) and spoken language disorders (school-age comprehension, assessment of bilingual/dialect speakers, language screening in behavior referrals). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8517 MRR=0.9115`. Baseline re-recorded. Coverage: Gap list (37 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=123 (57%), parent=48 (22%), specialist=21 (10%), teacher=25 (12%).

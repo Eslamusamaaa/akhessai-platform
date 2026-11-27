@@ -1,31 +1,31 @@
 {
   "model": "openrouter:baai/bge-m3",
-  "store": "pgvector",
-  "corpus_docs": 190,
+  "store": "memory",
+  "corpus_docs": 217,
   "overall": {
     "n": 48,
-    "recall@6": 0.8566,
-    "mrr": 0.901
+    "recall@6": 0.8517,
+    "mrr": 0.9115
   },
   "by_kind": {
     "dialect": {
       "n": 5,
-      "recall@6": 0.83,
+      "recall@6": 0.79,
       "mrr": 0.9
     },
     "domain": {
       "n": 21,
       "recall@6": 0.9468,
-      "mrr": 0.9762
+      "mrr": 1.0
     },
     "profile": {
       "n": 13,
-      "recall@6": 0.7064,
+      "recall@6": 0.7192,
       "mrr": 0.8654
     },
     "specialist_obs": {
       "n": 9,
-      "recall@6": 0.8778,
+      "recall@6": 0.8556,
       "mrr": 0.7778
     }
   },
@@ -37,13 +37,13 @@
     },
     "articulation": {
       "n": 5,
-      "recall@6": 1.0,
+      "recall@6": 0.91,
       "mrr": 0.9
     },
     "attention": {
       "n": 6,
-      "recall@6": 0.7083,
-      "mrr": 0.7917
+      "recall@6": 0.7167,
+      "mrr": 0.875
     },
     "emotional_regulation": {
       "n": 4,
@@ -82,7 +82,7 @@
     },
     "pragmatic_language": {
       "n": 4,
-      "recall@6": 0.875,
+      "recall@6": 0.9167,
       "mrr": 1.0
     },
     "proprioceptive": {
@@ -107,7 +107,7 @@
     },
     "social_communication": {
       "n": 8,
-      "recall@6": 0.6917,
+      "recall@6": 0.7125,
       "mrr": 0.8125
     },
     "vestibular": {
