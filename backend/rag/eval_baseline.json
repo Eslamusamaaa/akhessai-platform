@@ -1,19 +1,19 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 274,
+  "corpus_docs": 288,
   "overall": {
     "n": 48,
-    "recall@6": 0.8063,
-    "mrr": 0.901,
-    "precision@6": 0.6771
+    "recall@6": 0.8076,
+    "mrr": 0.9219,
+    "precision@6": 0.6875
   },
   "by_kind": {
     "dialect": {
       "n": 5,
       "recall@6": 0.74,
-      "mrr": 0.8,
-      "precision@6": 0.5333
+      "mrr": 0.9,
+      "precision@6": 0.5667
     },
     "domain": {
       "n": 21,
@@ -23,15 +23,15 @@
     },
     "profile": {
       "n": 13,
-      "recall@6": 0.6718,
+      "recall@6": 0.6846,
       "mrr": 0.8654,
-      "precision@6": 0.6026
+      "precision@6": 0.6154
     },
     "specialist_obs": {
       "n": 9,
-      "recall@6": 0.8222,
-      "mrr": 0.8333,
-      "precision@6": 0.5741
+      "recall@6": 0.8111,
+      "mrr": 0.8889,
+      "precision@6": 0.5926
     }
   },
   "by_domain": {
@@ -56,8 +56,8 @@
     "emotional_regulation": {
       "n": 4,
       "recall@6": 1.0,
-      "mrr": 0.875,
-      "precision@6": 0.7083
+      "mrr": 1.0,
+      "precision@6": 0.75
     },
     "executive_function": {
       "n": 3,
@@ -67,9 +67,9 @@
     },
     "expressive_language": {
       "n": 4,
-      "recall@6": 0.7833,
-      "mrr": 0.875,
-      "precision@6": 0.5833
+      "recall@6": 0.825,
+      "mrr": 1.0,
+      "precision@6": 0.6667
     },
     "externalizing": {
       "n": 2,
@@ -109,9 +109,9 @@
     },
     "receptive_language": {
       "n": 2,
-      "recall@6": 0.75,
+      "recall@6": 0.8333,
       "mrr": 1.0,
-      "precision@6": 0.75
+      "precision@6": 0.8333
     },
     "restricted_repetitive": {
       "n": 2,
@@ -127,7 +127,7 @@
     },
     "social_communication": {
       "n": 8,
-      "recall@6": 0.7,
+      "recall@6": 0.6875,
       "mrr": 0.8125,
       "precision@6": 0.5625
     },
