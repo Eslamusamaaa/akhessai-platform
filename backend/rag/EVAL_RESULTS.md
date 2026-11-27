@@ -238,3 +238,8 @@ answers the query): `overall n=48 Recall@6=0.8174 MRR=0.9219 Precision@6=0.7431`
 
 Adds 7 sourced documents from AACAP Facts for Families: panic disorder (parent, specialist), trichotillomania, PTSD (parent signs, specialist early intervention), and bullying (parent of a bullied child, parent of a child who bullies). Two sleep documents were drafted and dropped because sleep is outside the platform's domains and one displaced a relevant result. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8174 MRR=0.9219 Precision@6=0.7431`. Baseline re-recorded. Coverage: Gap list (19 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (33%), parent=143 (38%), specialist=46 (12%), teacher=61 (16%).
+
+## Corpus batch 19 (381 docs)
+
+Adds 7 sourced parent documents: NHS ADHD in children (under-5 caution, home support, assessment pathway), NHS Help your baby learn to talk (0-18 months, 18 months-3 years), ASHA speech sound disorders and late talker vs language problem. The Gulf-dialect language query gained two directly applicable labels; dialect recall dips only because its label count grew. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8187 MRR=0.9219 Precision@6=0.7465`. Baseline re-recorded. Coverage: Gap list (18 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (33%), parent=150 (39%), specialist=46 (12%), teacher=61 (16%).
