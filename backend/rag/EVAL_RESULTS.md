@@ -193,3 +193,8 @@ answers the query): `overall n=48 Recall@6=0.8076 MRR=0.9219 Precision@6=0.6875`
 
 10 Arabic documents from Child Mind Institute guides read 2026-11-27: anxiety in the classroom (how it looks, outbursts driven by fear), oppositional defiant disorder (signs and duration, parent-training programs, specialist assessment), dysgraphia (signs, evaluation and accommodations), speech sound disorder (classroom support, home modelling, voice and oral-motor red flags). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7083`. Baseline re-recorded. Coverage: Gap list (27 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (42%), parent=97 (33%), specialist=31 (10%), teacher=46 (15%).
+
+## Corpus batch 10 (306 docs)
+
+8 Arabic documents from Child Mind Institute quick guides read 2026-11-27: dyscalculia (signs at school and in daily life, classroom accommodations and tools, evaluation steps), separation anxiety disorder (vs typical separation distress, treatment incl. exposure and parent-based approaches, school signs), social anxiety disorder (signs, diagnosis and treatment). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7118`. Baseline re-recorded. Coverage: Gap list (27 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (41%), parent=101 (33%), specialist=33 (11%), teacher=48 (16%).
