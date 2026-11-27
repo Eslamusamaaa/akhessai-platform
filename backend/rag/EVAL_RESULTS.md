@@ -228,3 +228,8 @@ answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7326`
 
 Adds 9 sourced documents from AACAP Facts for Families: ADHD (parent signs, specialist comorbidity and treatment), learning disorders (parent signals, specialist evaluation), temper tantrums by age and when to seek help, discipline as teaching, starting school, and requesting school evaluation and services. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8104 MRR=0.9219 Precision@6=0.7361`. Baseline re-recorded. Coverage: Gap list (19 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (35%), parent=132 (37%), specialist=42 (12%), teacher=60 (17%).
+
+## Corpus batch 17 (367 docs)
+
+Adds 9 sourced documents from AACAP Facts for Families: depression (parent signs, specialist risk factors and treatment), conduct disorder (parent, specialist), physical punishment and alternatives, when to seek help (young children, adolescents), and somatic symptoms of emotional distress (parent, school return). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8174 MRR=0.9219 Precision@6=0.7431`. Baseline re-recorded. Coverage: Gap list (19 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (34%), parent=138 (38%), specialist=44 (12%), teacher=61 (17%).
