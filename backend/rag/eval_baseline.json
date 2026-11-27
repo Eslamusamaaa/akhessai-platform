@@ -1,39 +1,39 @@
 {
   "model": "paraphrase-multilingual-MiniLM-L12-v2",
   "store": "memory",
-  "corpus_docs": 160,
+  "corpus_docs": 190,
   "overall": {
     "n": 48,
-    "recall@6": 0.8378,
-    "mrr": 0.8924
+    "recall@6": 0.8208,
+    "mrr": 0.9184
   },
   "by_kind": {
     "dialect": {
       "n": 5,
-      "recall@6": 0.86,
-      "mrr": 0.9
+      "recall@6": 0.88,
+      "mrr": 1.0
     },
     "domain": {
       "n": 21,
-      "recall@6": 0.9484,
+      "recall@6": 0.9119,
       "mrr": 0.9762
     },
     "profile": {
       "n": 13,
-      "recall@6": 0.6154,
-      "mrr": 0.7179
+      "recall@6": 0.6115,
+      "mrr": 0.7756
     },
     "specialist_obs": {
       "n": 9,
-      "recall@6": 0.8889,
+      "recall@6": 0.8778,
       "mrr": 0.9444
     }
   },
   "by_domain": {
     "academic_skills": {
       "n": 6,
-      "recall@6": 0.6694,
-      "mrr": 0.7917
+      "recall@6": 0.6556,
+      "mrr": 0.9167
     },
     "articulation": {
       "n": 5,
@@ -42,7 +42,7 @@
     },
     "attention": {
       "n": 6,
-      "recall@6": 0.7778,
+      "recall@6": 0.7167,
       "mrr": 0.75
     },
     "emotional_regulation": {
@@ -68,7 +68,7 @@
     "hyperactivity": {
       "n": 2,
       "recall@6": 0.8,
-      "mrr": 0.375
+      "mrr": 0.625
     },
     "impulsivity": {
       "n": 2,
@@ -77,17 +77,17 @@
     },
     "internalizing": {
       "n": 3,
-      "recall@6": 0.75,
+      "recall@6": 0.6944,
       "mrr": 1.0
     },
     "pragmatic_language": {
       "n": 4,
-      "recall@6": 0.8375,
+      "recall@6": 0.8542,
       "mrr": 0.8333
     },
     "proprioceptive": {
       "n": 2,
-      "recall@6": 1.0,
+      "recall@6": 0.875,
       "mrr": 0.75
     },
     "receptive_language": {
@@ -97,22 +97,22 @@
     },
     "restricted_repetitive": {
       "n": 2,
-      "recall@6": 0.6667,
+      "recall@6": 0.75,
       "mrr": 1.0
     },
     "sensory_reactivity": {
       "n": 3,
-      "recall@6": 0.8,
+      "recall@6": 0.7,
       "mrr": 1.0
     },
     "social_communication": {
       "n": 8,
-      "recall@6": 0.6396,
+      "recall@6": 0.6917,
       "mrr": 0.9375
     },
     "vestibular": {
       "n": 2,
-      "recall@6": 1.0,
+      "recall@6": 0.875,
       "mrr": 0.75
     }
   }
