@@ -133,41 +133,49 @@ This is intentionally **not** ML — every decision is a readable threshold in Y
 
 ## The RAG pipeline
 
-`backend/rag/pipeline.py` (retrieval), `backend/rag/corpus.jsonl` (the corpus, one JSON record per line), `backend/rag/ingest.py` (loading), `backend/rag/schema.sql` (table)
+| Piece | Where |
+|---|---|
+| Retrieval (`search_guidelines`) | [`backend/rag/pipeline.py`](backend/rag/pipeline.py) |
+| Corpus (text) | [`backend/rag_data/documents/corpus.jsonl`](backend/rag_data/documents/corpus.jsonl) |
+| Vectors (versioned copy) | [`backend/rag_data/embeddings/`](backend/rag_data/embeddings/) — see [`backend/rag_data/README.md`](backend/rag_data/README.md) |
+| Vector store | Neon Postgres + pgvector, table `rag_documents` ([`backend/rag/schema.sql`](backend/rag/schema.sql)) |
+| Loader | [`backend/rag/ingest.py`](backend/rag/ingest.py) |
+| Quality tooling | `validate_corpus.py`, `dedup_check.py`, `coverage_report.py`, `demand_report.py`, `evaluate.py` in [`backend/rag/`](backend/rag/) |
 
-**Corpus:** 120 Arabic clinical documents, translated and adapted from ASHA, CDC, CHADD, NIH, AOTA, and IDA guidelines. Distribution: autism (30), speech_language (21), adhd (18), learning_disabilities (18), behavior_emotional (18), sensory_processing (15).
+**Corpus:** Arabic clinical guideline documents tagged by specialty, domain (the 17 question-bank
+domains), age band, category (glossary / strategy / goals / referral) and audience (parent /
+teacher / specialist / all). The original 120 documents are kept as legacy records; every new
+document is written in original Arabic from a named source read live (CDC, NIH institutes, WHO,
+AAP, Saudi MOH, ...), with `source_name`, `source_url`, `license` and `accessed_at` on the record.
+Progress toward the 1,000-document target and the coverage gaps: `python -m rag.coverage_report`.
 
-Each document is a flat record:
+**Embeddings:** `baai/bge-m3` (1024 dims, multilingual, strong on Arabic) through the **OpenRouter
+embeddings API**, using the same `OPENROUTER_API_KEY` as the report LLM — no model weights, no
+torch, in the deployed function. Chosen by a measured bake-off on 48 Arabic queries
+([`backend/rag/EVAL_RESULTS.md`](backend/rag/EVAL_RESULTS.md)). `EMBEDDING_PROVIDER=local`
+switches to in-process sentence-transformers for offline experiments
+(`pip install -r requirements-local.txt`).
 
-```python
-{
-    "id": 1,
-    "title": "...",
-    "specialty_tag": "autism",              # one of the 6 specialties
-    "domain_tag": "social_communication",   # one of the 17 domains
-    "age_band": "0-6",                      # "0-6" | "6-18" | "any"
-    "category": "guideline",                # guideline | research | intervention | assessment
-    "content": "...",                       # 100–300 words, Arabic
-}
-```
+**Retrieval flow** (unchanged semantics):
 
-**Retrieval flow:**
+1. **Filter** by the child's active specialties, age band (`any` always passes) and elevated domains.
+2. **Embed** the query (`baai/bge-m3` via OpenRouter).
+3. **Score** by cosine similarity, +0.05 for `goals` / `strategy` documents.
+4. **Return** the top 6 to the report generator.
 
-1. **Filter** the 120 documents down to those matching the active specialty tag(s) and age band (`age_band == "any"` always passes).
-2. **Embed** the query and every candidate document with `paraphrase-multilingual-MiniLM-L12-v2` (384 dimensions, multilingual, Arabic-capable), L2-normalized.
-3. **Score** each candidate via cosine similarity (a dot product, since vectors are pre-normalized).
-4. **Rank and select** the top 6 documents.
+All of it is one SQL query against `rag_documents`. Fallbacks: if the embeddings API fails, Postgres
+Arabic full-text search; if the database is unreachable or `RAG_DATABASE_URL` is not Postgres,
+in-memory cosine search using the committed vectors in `rag_data/embeddings/`.
+`RAG_STORE=memory` forces the in-memory path (tests).
 
-**Storage:** Postgres + pgvector is the vector store (table `rag_documents`, schema in `backend/rag/schema.sql`). Vectors are loaded offline and idempotently — never inside a request:
+**Loading / updating** (offline, idempotent — no DELETE/DROP, unchanged documents are skipped):
 
 ```bash
 cd backend
-python -m rag.ingest --init-schema   # first time: creates the extension, table and indexes
-python -m rag.ingest                 # re-runs are no-ops unless corpus.jsonl changed (no DELETE/DROP)
-python -m rag.parity_check           # pgvector results == in-memory results on sample inputs
+python -m rag.ingest --init-schema   # validate, dedup, embed changed docs, upsert to Neon, export vectors
+python -m rag.evaluate --check       # Recall@6 / MRR must not regress vs rag/eval_baseline.json
+python -m rag.parity_check           # pgvector results == in-memory results
 ```
-
-Search is one SQL query with the same filters and scoring as before (cosine + 0.05 for `goals`/`strategy`). If the embedding model cannot load, it falls back to Postgres Arabic full-text search; if the database is unreachable or `RAG_DATABASE_URL` is not Postgres (e.g. local SQLite), it falls back to in-memory cosine search over `corpus.jsonl`. `RAG_STORE=memory` forces the in-memory path (tests).
 
 ---
 
@@ -214,7 +222,7 @@ Full breakdown of what's implemented vs. deferred for production: [SECURITY.md](
 - FastAPI, SQLAlchemy, Pydantic
 - PyJWT + Argon2 (`passlib`) for auth
 - `cryptography` (Fernet) for PHI encryption
-- `sentence-transformers` + Postgres/pgvector (via `psycopg2`) for the RAG pipeline
+- Neon Postgres + pgvector (via `psycopg2`) and OpenRouter embeddings (`baai/bge-m3`) for the RAG pipeline
 - `pyyaml` for the rules engine config
 - `pytest` for the evaluator test suite
 
@@ -242,10 +250,14 @@ akhessai-platform/
 │   ├── llm/
 │   │   └── client.py         # prompt assembly + OpenRouter call
 │   ├── rag/
-│   │   ├── pipeline.py       # embeddings + search_guidelines (pgvector / in-memory)
-│   │   ├── corpus.jsonl      # the 120-doc Arabic corpus (data, one record per line)
-│   │   ├── ingest.py         # idempotent loader into rag_documents
-│   │   └── schema.sql        # pgvector table + indexes
+│   │   ├── pipeline.py       # embeddings (OpenRouter) + search_guidelines (pgvector / in-memory)
+│   │   ├── ingest.py         # idempotent loader into rag_documents + vector export
+│   │   ├── schema.sql        # pgvector table + indexes
+│   │   ├── evaluate.py       # Recall@6 / MRR gate; eval_set.jsonl, EVAL_RESULTS.md
+│   │   └── validate_corpus.py, dedup_check.py, coverage_report.py, demand_report.py
+│   ├── rag_data/
+│   │   ├── documents/corpus.jsonl   # the Arabic guideline corpus (text + metadata)
+│   │   └── embeddings/*.jsonl       # versioned vectors per embedding model
 │   ├── rules/
 │   │   ├── evaluator.py      # scoring, triggering, severity, priority
 │   │   ├── rules_config.yaml # all thresholds — no logic in YAML, only config
@@ -517,12 +529,12 @@ This repo's "intelligence" is three independent pieces, none of which are tied t
 | [`backend/rules/evaluator.py`](backend/rules/evaluator.py) | The scoring algorithm (`evaluate_rules()`): weighted domain averages, specialty triggering, severity bands, cross-informant discrepancy, priority tier. | The `import models` line and the one helper `_get_child_age_months()` that reads `session.child_age_months` — replace `session` with any plain object/dict exposing `onboarding_specialties`, `age_band`, `child_age_months`, and replace each `models.Response` with any object exposing `.question_id`, `.selected_options`, `.informant`, `.points`. Nothing else touches a database. |
 | [`backend/questions/bank.json`](backend/questions/bank.json) | The full question bank — every question's text, type, options, and the `points` value attached to each option. Plain JSON. | Nothing — copy it verbatim. This is also what you build your Flutter question-answering screens from directly (see field shapes below). |
 | [`backend/questions/resolver.py`](backend/questions/resolver.py) | The adaptive next-question selection logic (`get_next_question()`) — which question to show next, given what's already answered. | Same as `evaluator.py`: only the `models` import and the plain-object substitution. |
-| [`backend/rag/pipeline.py`](backend/rag/pipeline.py) | The embedding + retrieval logic. `SEED_DOCUMENTS` is loaded from [`backend/rag/corpus.jsonl`](backend/rag/corpus.jsonl) (the 120-document Arabic corpus). | The pgvector path (`_search_pgvector`) if you don't run Postgres — the in-memory path (`_search_in_memory`, used automatically when `RAG_DATABASE_URL` isn't Postgres) is self-contained and sufficient for this corpus size. |
+| [`backend/rag/pipeline.py`](backend/rag/pipeline.py) | The embedding + retrieval logic. `SEED_DOCUMENTS` is loaded from [`backend/rag_data/documents/corpus.jsonl`](backend/rag_data/documents/corpus.jsonl) (the Arabic corpus). | The pgvector path (`_search_pgvector`) if you don't run Postgres — the in-memory path (`_search_in_memory`, used automatically when `RAG_DATABASE_URL` isn't Postgres) is self-contained and sufficient for this corpus size. |
 | [`backend/llm/client.py`](backend/llm/client.py) | The exact system prompt (`_SYSTEM_TEMPLATE`), the user-prompt assembly (`build_prompt()`), the OpenRouter HTTP call, and the output JSON schema (`ReportDraftSchema`). | Nothing structural — this file has **zero database dependency already**, it's pure prompt-building + one `requests.post()` call. |
 
 ### Getting the 120-document corpus out as plain JSON (one command, no hand-copying)
 
-The corpus is already a data file, [`backend/rag/corpus.jsonl`](backend/rag/corpus.jsonl) (one JSON object per line). If you want a single JSON array instead:
+The corpus is already a data file, [`backend/rag_data/documents/corpus.jsonl`](backend/rag_data/documents/corpus.jsonl) (one JSON object per line). If you want a single JSON array instead:
 
 ```bash
 cd backend

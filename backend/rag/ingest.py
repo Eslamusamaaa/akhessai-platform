@@ -1,4 +1,4 @@
-"""Load rag/corpus.jsonl into Postgres + pgvector (rag_documents). Offline only:
+"""Load rag_data/documents/corpus.jsonl into Postgres + pgvector (rag_documents). Offline only:
 run it locally or in CI, never inside a request.
 
     cd backend
@@ -14,6 +14,7 @@ import argparse
 import collections
 import hashlib
 import json
+import os
 import re
 import sys
 from typing import Any, Dict, List, Optional
@@ -21,7 +22,7 @@ from typing import Any, Dict, List, Optional
 from config import settings
 from rag import db as ragdb
 from rag import coverage_report, dedup_check, validate_corpus
-from rag.pipeline import (CORPUS_PATH, _try_load_st, document_text, get_embedding_dim,
+from rag.pipeline import (CORPUS_PATH, _try_load_st, document_text, embeddings_path, get_embedding_dim,
                           get_text_embeddings, semantic_model_available)
 
 CHUNK_TRIGGER_TOKENS = 400   # documents longer than this are chunked
@@ -140,9 +141,30 @@ def load_report(records: List[Dict[str, Any]]) -> str:
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 
+def export_embeddings(table: str, model_tag: str, url: Optional[str] = None) -> int:
+    """Write every stored vector of one model to rag_data/embeddings/<tag>.jsonl (sorted, stable),
+    so the vectors are versioned in git next to the documents and the in-memory fallback can use
+    them without calling the embeddings API."""
+    conn = ragdb.connect(url)
+    try:
+        with conn.cursor() as cur:
+            cur.execute(f"SELECT doc_key, chunk_index, content_hash, embedding::text FROM {ragdb.safe_table(table)} "
+                        "WHERE embedding_model = %s ORDER BY doc_key, chunk_index", (model_tag,))
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+    path = embeddings_path(model_tag)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        for key, idx, h, vec in rows:
+            f.write(json.dumps({"doc_key": key, "chunk_index": idx, "embedding_model": model_tag,
+                                "content_hash": h, "embedding": [round(x, 6) for x in json.loads(vec)]}) + "\n")
+    return len(rows)
+
+
 def ingest(corpus_path: str, table: str, init_schema: bool = False, dry_run: bool = False,
            batch_size: int = 32, url: Optional[str] = None, dedup: bool = True,
-           strict: bool = False) -> Dict[str, int]:
+           strict: bool = False, export: bool = True) -> Dict[str, int]:
     records = validate_corpus.load_jsonl(corpus_path)
     valid, failures = validate_corpus.validate(records)
     for key, problem in failures:
@@ -214,6 +236,9 @@ def ingest(corpus_path: str, table: str, init_schema: bool = False, dry_run: boo
     finally:
         conn.close()
 
+    if export:
+        n = export_embeddings(table, model_tag, url)
+        print(f"[ingest] exported {n} vectors -> {os.path.relpath(embeddings_path(model_tag))}")
     changed = stats["inserted"] + stats["updated"]
     print(f"[ingest] {table}: {changed} changed rows "
           f"({stats['inserted']} inserted, {stats['updated']} updated), {stats['unchanged']} unchanged.")
@@ -228,6 +253,7 @@ def main(argv=None) -> int:
     ap.add_argument("--dry-run", action="store_true", help="validate and report only")
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--skip-dedup", action="store_true", help="skip the near-duplicate check")
+    ap.add_argument("--no-export", action="store_true", help="do not rewrite rag_data/embeddings/<model>.jsonl")
     ap.add_argument("--strict", action="store_true",
                     help="load nothing if any record is invalid or a near-duplicate pair is unresolved")
     args = ap.parse_args(argv)
@@ -235,7 +261,7 @@ def main(argv=None) -> int:
         print("[ingest] RAG_DATABASE_URL (or DATABASE_URL) must be a Postgres URL.")
         return 2
     stats = ingest(args.corpus, args.table, args.init_schema, args.dry_run, args.batch_size,
-                   dedup=not args.skip_dedup, strict=args.strict)
+                   dedup=not args.skip_dedup, strict=args.strict, export=not args.no_export)
     return 1 if stats["rejected"] else 0
 
 
