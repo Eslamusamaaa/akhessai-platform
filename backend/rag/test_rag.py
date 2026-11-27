@@ -19,6 +19,7 @@ from rag import ingest as ragingest
 from rag import pipeline
 from rag import validate_corpus as vc
 from rag.parity_check import main_query, sample_inputs
+from rag import evaluate as ev
 
 BACKEND = pathlib.Path(__file__).resolve().parent.parent
 
@@ -183,3 +184,18 @@ def test_ingest_is_idempotent_and_matches_memory(pg_table):
         mem = client._search_in_memory(c["specialties"], c["domains"], c["age_band"], q, 6)
         assert [d["id"] for d in pg] == [d["id"] for d in mem], c
         assert all(set(d) == RESULT_KEYS for d in pg)
+
+
+# ── Evaluation metrics ─────────────────────────────────────────────────────────
+
+def test_eval_metrics_and_set_integrity():
+
+    assert ev.score(["a", "b", "c"], ["c", "x"]) == {"recall": 0.5, "rr": 1 / 3}
+    assert ev.score(["a"], ["x"]) == {"recall": 0.0, "rr": 0.0}
+    keys = {d["doc_key"] for d in pipeline.SEED_DOCUMENTS}
+    items = ev.load_eval()
+    assert 40 <= len(items) <= 60
+    assert all(set(e["relevant"]) <= keys and e["relevant"] for e in items)
+    base = {"overall": {"recall@6": 0.8, "mrr": 0.8}, "by_kind": {"domain": {"recall@6": 0.9, "mrr": 0.9}}}
+    cur = {"overall": {"recall@6": 0.8, "mrr": 0.8}, "by_kind": {"domain": {"recall@6": 0.85, "mrr": 0.9}}}
+    assert ev.regressions(cur, base) == ["kind=domain recall@6: 0.8500 < baseline 0.9000"]
