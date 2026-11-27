@@ -203,3 +203,8 @@ answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7118`
 
 7 Arabic documents from Child Mind Institute read 2026-11-27: obsessive-compulsive disorder in children (obsessions and compulsions, assessment and exposure-and-response-prevention), sensory processing issues explained (over- vs under-sensitivity, not a standalone diagnosis, movement seeking vs balance fear), nonverbal learning disorder (pattern difficulties, home and school strategies). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7118`. Baseline re-recorded. Coverage: Gap list (27 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (40%), parent=105 (34%), specialist=35 (11%), teacher=49 (16%).
+
+## Corpus batch 12 (324 docs)
+
+Adds 11 sourced ADHD and executive-function documents (Harvard Center on the Developing Child activity guide, Child Mind Institute ADHD guide, CDC behavior therapy and classroom pages, AAP HealthyChildren), targeting attention/impulsivity/hyperactivity 0-6 and 6-18 and executive_function 0-6. Two drafts were dropped as near-duplicates of existing CDC docs. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8028 MRR=0.9219 Precision@6=0.7153`. Baseline re-recorded. Coverage: Gap list (26 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (38%), parent=111 (34%), specialist=36 (11%), teacher=53 (16%).
