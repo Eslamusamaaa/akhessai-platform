@@ -198,3 +198,8 @@ answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7083`
 
 8 Arabic documents from Child Mind Institute quick guides read 2026-11-27: dyscalculia (signs at school and in daily life, classroom accommodations and tools, evaluation steps), separation anxiety disorder (vs typical separation distress, treatment incl. exposure and parent-based approaches, school signs), social anxiety disorder (signs, diagnosis and treatment). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7118`. Baseline re-recorded. Coverage: Gap list (27 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (41%), parent=101 (33%), specialist=33 (11%), teacher=48 (16%).
+
+## Corpus batch 11 (313 docs)
+
+7 Arabic documents from Child Mind Institute read 2026-11-27: obsessive-compulsive disorder in children (obsessions and compulsions, assessment and exposure-and-response-prevention), sensory processing issues explained (over- vs under-sensitivity, not a standalone diagnosis, movement seeking vs balance fear), nonverbal learning disorder (pattern difficulties, home and school strategies). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8097 MRR=0.9219 Precision@6=0.7118`. Baseline re-recorded. Coverage: Gap list (27 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (40%), parent=105 (34%), specialist=35 (11%), teacher=49 (16%).
