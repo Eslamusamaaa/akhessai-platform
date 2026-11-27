@@ -10,7 +10,8 @@ EMBEDDING_MODEL pick the store and model). Measures only; changes no runtime beh
     python -m rag.evaluate --write-baseline        # record the current numbers as the baseline
     python -m rag.evaluate --json out.json         # machine-readable results
 
-Recall@6 per query = |relevant ∩ top-6| / |relevant|; MRR = 1 / rank of the first relevant
+Recall@6 per query = |relevant ∩ top-6| / |relevant| (relevant = labelled docs present in the corpus;
+the denominator is capped at 6 so a query with more than 6 relevant docs can still score 1.0); MRR = 1 / rank of the first relevant
 doc (0 if none in the top 6). Slices: by query kind and by each domain the query targets.
 """
 import argparse
@@ -62,7 +63,7 @@ def score(ranked_keys: List[str], relevant: List[str]) -> Dict[str, float]:
     rel = set(relevant)
     hits = [k for k in ranked_keys[:K] if k in rel]
     rr = next((1.0 / (i + 1) for i, k in enumerate(ranked_keys[:K]) if k in rel), 0.0)
-    return {"recall": len(hits) / len(rel) if rel else 0.0, "rr": rr}
+    return {"recall": len(hits) / min(len(rel), K) if rel else 0.0, "rr": rr}
 
 
 def _agg(rows: List[Dict[str, float]]) -> Dict[str, float]:
@@ -74,6 +75,10 @@ def _agg(rows: List[Dict[str, float]]) -> Dict[str, float]:
 
 def evaluate(eval_set: List[Dict[str, Any]], with_similarity_only: bool = False) -> Dict[str, Any]:
     id2key = _id_to_key()
+    # Relevance labels may name documents added in later corpus batches; only the ones present
+    # in the corpus being evaluated count, so an older corpus is scored on the same footing.
+    present = set(id2key.values())
+    eval_set = [{**e, "relevant": [k for k in e["relevant"] if k in present]} for e in eval_set]
     per_query, by_kind, by_domain = [], collections.defaultdict(list), collections.defaultdict(list)
     sim_rows, sim_by_kind = [], collections.defaultdict(list)
     for e in eval_set:
