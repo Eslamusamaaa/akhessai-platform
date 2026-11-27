@@ -6,7 +6,7 @@ run it locally or in CI, never inside a request.
     python -m rag.ingest                      # idempotent re-load: unchanged rows are skipped
     python -m rag.ingest --dry-run            # validate + chunk + report, touch nothing
 
-Steps: validate -> chunk (> ~400 tokens) -> embed changed chunks with the active model
+Steps: validate -> dedup (>= 0.97 rejected, 0.92-0.97 listed) -> chunk (> ~400 tokens) -> embed changed chunks with the active model
 -> upsert ON CONFLICT (doc_key, chunk_index, embedding_model). There is no DELETE, DROP
 or table wipe anywhere: re-running with an unchanged corpus reports 0 changed rows.
 """
@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional
 
 from config import settings
 from rag import db as ragdb
-from rag import validate_corpus
+from rag import coverage_report, dedup_check, validate_corpus
 from rag.pipeline import (CORPUS_PATH, _try_load_st, document_text, get_embedding_dim,
                           get_text_embeddings, semantic_model_available)
 
@@ -141,20 +141,38 @@ def load_report(records: List[Dict[str, Any]]) -> str:
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def ingest(corpus_path: str, table: str, init_schema: bool = False, dry_run: bool = False,
-           batch_size: int = 32, url: Optional[str] = None) -> Dict[str, int]:
+           batch_size: int = 32, url: Optional[str] = None, dedup: bool = True,
+           strict: bool = False) -> Dict[str, int]:
     records = validate_corpus.load_jsonl(corpus_path)
     valid, failures = validate_corpus.validate(records)
     for key, problem in failures:
         print(f"[ingest] REJECTED {key}: {problem}")
+    if failures and strict:
+        raise SystemExit(f"[ingest] {len(failures)} validation problems; nothing loaded (--strict).")
 
     if not dry_run and not semantic_model_available():
         raise SystemExit("[ingest] No sentence-transformers model could be loaded "
                          f"({settings.EMBEDDING_MODEL}); refusing to store keyword-fallback vectors.")
+    if dedup and semantic_model_available():
+        rejects, review = dedup_check.check(valid)
+        drop = {r["reject"] for r in rejects}
+        for r in rejects:
+            print(f"[ingest] REJECTED {r['reject']}: near-duplicate of "
+                  f"{r['a'] if r['reject'] == r['b'] else r['b']} (cos {r['similarity']})")
+        for r in review:
+            print(f"[ingest] DEDUP REVIEW cos {r['similarity']}: {r['a']} ~ {r['b']} (unresolved)")
+        if review and strict:
+            raise SystemExit(f"[ingest] {len(review)} unresolved near-duplicate pairs (--strict).")
+        failures += [(k, "near-duplicate") for k in drop]
+        valid = [r for r in valid if r["doc_key"] not in drop]
     model_tag = settings.EMBEDDING_VERSION
     rows = build_rows(valid, model_tag, _token_counter())
     print(f"[ingest] {len(records)} records, {len(valid)} valid, {len(failures)} rejected, "
           f"{len(rows)} chunks, model={model_tag}")
     print(load_report(valid))
+    gaps = coverage_report.gaps(valid, coverage_report.load_bank())
+    print(f"[ingest] coverage: {len(gaps)} question-touched cells under {coverage_report.MIN_DOCS} docs "
+          "(python -m rag.coverage_report for the list)")
     stats = {"records": len(records), "valid": len(valid), "rejected": len(failures),
              "chunks": len(rows), "inserted": 0, "updated": 0, "unchanged": 0}
     if dry_run:
@@ -209,11 +227,15 @@ def main(argv=None) -> int:
     ap.add_argument("--init-schema", action="store_true", help="create the table/indexes if missing")
     ap.add_argument("--dry-run", action="store_true", help="validate and report only")
     ap.add_argument("--batch-size", type=int, default=32)
+    ap.add_argument("--skip-dedup", action="store_true", help="skip the near-duplicate check")
+    ap.add_argument("--strict", action="store_true",
+                    help="load nothing if any record is invalid or a near-duplicate pair is unresolved")
     args = ap.parse_args(argv)
     if not args.dry_run and not ragdb.is_postgres_url(settings.RAG_DATABASE_URL):
         print("[ingest] RAG_DATABASE_URL (or DATABASE_URL) must be a Postgres URL.")
         return 2
-    stats = ingest(args.corpus, args.table, args.init_schema, args.dry_run, args.batch_size)
+    stats = ingest(args.corpus, args.table, args.init_schema, args.dry_run, args.batch_size,
+                   dedup=not args.skip_dedup, strict=args.strict)
     return 1 if stats["rejected"] else 0
 
 
