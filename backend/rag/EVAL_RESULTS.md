@@ -258,3 +258,8 @@ answers the query): `overall n=48 Recall@6=0.8326 MRR=0.9323 Precision@6=0.7604`
 
 7 KidsHealth (Nemours) school factsheets: teacher cells for ADHD hyperactivity, ODD, receptive and expressive language, depression, autism Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8354 MRR=0.9323 Precision@6=0.7674`. Baseline re-recorded. Coverage: Gap list (16 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (31%), parent=155 (39%), specialist=49 (12%), teacher=69 (17%).
+
+## Corpus batch 23 (404 docs)
+
+7 KidsHealth parent docs: self-control by age, older-child tempers, toddler biting, speech intelligibility, language delay signs, 2-3 and 4-5 language milestones Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (15 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (31%), parent=162 (40%), specialist=49 (12%), teacher=69 (17%).
