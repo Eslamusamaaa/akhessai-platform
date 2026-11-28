@@ -288,3 +288,8 @@ answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`
 
 4 HealthyChildren.org (AAP) parent docs: 2-year-old language variation, 2-year-old emotions, joint-attention signs of autism, positive discipline by age. Precision 0.7743 -> 0.7812; dialect recall dip from label growth only Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8441 MRR=0.9323 Precision@6=0.7812`. Baseline re-recorded. Coverage: Gap list (13 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=174 (41%), specialist=49 (12%), teacher=73 (17%).
+
+## Corpus batch 29 (424 docs)
+
+KidsHealth: ADHD therapy sessions (parent), teacher role in IEP, reading to toddlers (early literacy), imaginative play and self-control. Dropped panic-in-class teacher doc (displaced a depression result). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8358 MRR=0.9427 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (13 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (29%), parent=177 (42%), specialist=49 (12%), teacher=74 (17%).
