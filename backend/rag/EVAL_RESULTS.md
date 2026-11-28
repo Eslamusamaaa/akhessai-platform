@@ -253,3 +253,8 @@ answers the query): `overall n=48 Recall@6=0.8326 MRR=0.9323 Precision@6=0.7604`
 
 Adds 3 sourced sensory documents from the STAR Institute: infant/toddler observation checklist, school-age signs for teachers, and a specialist overview of modulation, discrimination and praxis. A preschool movement-signs draft was dropped because it displaced a more specific vestibular result. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8326 MRR=0.9323 Precision@6=0.7604`. Baseline re-recorded. Coverage: Gap list (18 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (32%), parent=154 (39%), specialist=49 (13%), teacher=63 (16%).
+
+## Corpus batch 22 (397 docs)
+
+7 KidsHealth (Nemours) school factsheets: teacher cells for ADHD hyperactivity, ODD, receptive and expressive language, depression, autism Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8354 MRR=0.9323 Precision@6=0.7674`. Baseline re-recorded. Coverage: Gap list (16 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (31%), parent=155 (39%), specialist=49 (12%), teacher=69 (17%).
