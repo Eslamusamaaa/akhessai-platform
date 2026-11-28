@@ -278,3 +278,8 @@ answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9340 Precision@6=0.7743`
 
 3 KidsHealth parent docs: infant/toddler separation anxiety, separation anxiety disorder signs, early dyslexia signs. Tiny MRR reorder (one adjacent swap), precision unchanged Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (14 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=168 (41%), specialist=49 (12%), teacher=73 (18%).
+
+## Corpus batch 27 (416 docs)
+
+2 KidsHealth parent docs: hearing evaluation schedule and tests, school accommodation plans vs IEP. Dropped a generic speech-therapy doc that displaced specific results Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (13 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=170 (41%), specialist=49 (12%), teacher=73 (18%).
