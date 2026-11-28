@@ -273,3 +273,8 @@ answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`
 
 3 Berkshire Healthcare OT docs: school sensory circuits, auditory over/under-responsiveness, visual classroom adjustments Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9340 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (14 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=165 (40%), specialist=49 (12%), teacher=73 (18%).
+
+## Corpus batch 26 (414 docs)
+
+3 KidsHealth parent docs: infant/toddler separation anxiety, separation anxiety disorder signs, early dyslexia signs. Tiny MRR reorder (one adjacent swap), precision unchanged Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (14 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=168 (41%), specialist=49 (12%), teacher=73 (18%).
