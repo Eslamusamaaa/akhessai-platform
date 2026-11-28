@@ -303,3 +303,8 @@ answers the query): `overall n=48 Recall@6=0.8441 MRR=0.9323 Precision@6=0.7812`
 
 New NHS sources: Forth Valley OT heavy work and deep pressure (proprioceptive 0-6 parent), Doncaster and Bassetlaw OT graded movement and movement breaks (vestibular 6-18 parent), Health for Under 5s ADHD signs and referral under 5. Dropped Forth Valley movement-seeking doc (displaced a vestibular result). Precision unchanged; recall dip only from one-for-one label growth. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8413 MRR=0.9323 Precision@6=0.7812`. Baseline re-recorded. Coverage: Gap list (12 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (29%), parent=183 (42%), specialist=49 (11%), teacher=75 (17%).
+
+## Corpus batch 32 (438 docs)
+
+New source Understood.org: toddler ADHD vs typical activity, ADHD or immaturity (preschool referral), eight classroom ADHD strategies incl. wait time (teacher), trouble focusing, ADHD outbursts, executive-function board games, ADHD discipline. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8413 MRR=0.9340 Precision@6=0.7847`. Baseline re-recorded. Coverage: Gap list (9 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (28%), parent=189 (43%), specialist=49 (11%), teacher=76 (17%).

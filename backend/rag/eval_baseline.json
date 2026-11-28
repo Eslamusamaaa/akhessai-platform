@@ -1,12 +1,12 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 431,
+  "corpus_docs": 438,
   "overall": {
     "n": 48,
     "recall@6": 0.8413,
-    "mrr": 0.9323,
-    "precision@6": 0.7812
+    "mrr": 0.934,
+    "precision@6": 0.7847
   },
   "by_kind": {
     "dialect": {
@@ -19,12 +19,12 @@
       "n": 21,
       "recall@6": 0.9048,
       "mrr": 0.9762,
-      "precision@6": 0.873
+      "precision@6": 0.881
     },
     "profile": {
       "n": 13,
       "recall@6": 0.7359,
-      "mrr": 0.8654,
+      "mrr": 0.8718,
       "precision@6": 0.6795
     },
     "specialist_obs": {
@@ -38,7 +38,7 @@
     "academic_skills": {
       "n": 6,
       "recall@6": 0.7611,
-      "mrr": 0.875,
+      "mrr": 0.8889,
       "precision@6": 0.75
     },
     "articulation": {
@@ -50,7 +50,7 @@
     "attention": {
       "n": 6,
       "recall@6": 0.7556,
-      "mrr": 0.875,
+      "mrr": 0.8889,
       "precision@6": 0.6667
     },
     "emotional_regulation": {
@@ -62,7 +62,7 @@
     "executive_function": {
       "n": 3,
       "recall@6": 0.7333,
-      "mrr": 0.75,
+      "mrr": 0.7778,
       "precision@6": 0.6667
     },
     "expressive_language": {
@@ -79,13 +79,13 @@
     },
     "hyperactivity": {
       "n": 2,
-      "recall@6": 0.5333,
+      "recall@6": 0.6167,
       "mrr": 1.0,
-      "precision@6": 0.5
+      "precision@6": 0.5833
     },
     "impulsivity": {
       "n": 2,
-      "recall@6": 0.7,
+      "recall@6": 0.6167,
       "mrr": 1.0,
       "precision@6": 0.5833
     },
