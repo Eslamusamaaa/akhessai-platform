@@ -268,3 +268,8 @@ answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`
 
 4 KidsHealth docs: language disorder types for teachers, 1-2-3 organization method, parenting a child with ADHD, social anxiety in class Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (14 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=164 (40%), specialist=49 (12%), teacher=71 (17%).
+
+## Corpus batch 25 (411 docs)
+
+3 Berkshire Healthcare OT docs: school sensory circuits, auditory over/under-responsiveness, visual classroom adjustments Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9340 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (14 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=165 (40%), specialist=49 (12%), teacher=73 (18%).
