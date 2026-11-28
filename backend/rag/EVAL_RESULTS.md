@@ -313,3 +313,8 @@ answers the query): `overall n=48 Recall@6=0.8413 MRR=0.9340 Precision@6=0.7847`
 
 New source National Autistic Society (UK): routine and preparing for change, stimming (when to leave it, harmful stims), focused interests, masking at school (teacher), demand avoidance. Per-query top-6: one-for-one swap only; tiny profile MRR jitter is run-to-run embedding noise. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8413 MRR=0.9323 Precision@6=0.7847`. Baseline re-recorded. Coverage: Gap list (9 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (28%), parent=193 (44%), specialist=49 (11%), teacher=77 (17%).
+
+## Corpus batch 34 (451 docs)
+
+Leicestershire Partnership NHS early-language strategies for nursery staff (receptive 0-6 teacher) plus Understood.org: classroom accommodations for language disorders, receptive and expressive signs, dyslexia and dyscalculia signs in preschool, signs a student needs explicit reading instruction, listening comprehension. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8420 MRR=0.9323 Precision@6=0.7882`. Baseline re-recorded. Coverage: Gap list (9 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (27%), parent=198 (44%), specialist=49 (11%), teacher=80 (18%).
