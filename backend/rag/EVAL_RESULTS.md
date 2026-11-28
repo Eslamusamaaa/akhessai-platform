@@ -293,3 +293,8 @@ answers the query): `overall n=48 Recall@6=0.8441 MRR=0.9323 Precision@6=0.7812`
 
 KidsHealth: ADHD therapy sessions (parent), teacher role in IEP, reading to toddlers (early literacy), imaginative play and self-control. Dropped panic-in-class teacher doc (displaced a depression result). Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8358 MRR=0.9427 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (13 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (29%), parent=177 (42%), specialist=49 (12%), teacher=74 (17%).
+
+## Corpus batch 30 (428 docs)
+
+KidsHealth: OCD signs in class (teacher), childhood stress (parent), healing after trauma (parent), building self-esteem (parent). Dropped Tourette teacher doc, dyscalculia test-accommodations doc, and a stuttering parent doc (each displaced or mis-hit labelled results). No per-query top-6 change vs master. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8441 MRR=0.9323 Precision@6=0.7812`. Baseline re-recorded. Coverage: Gap list (13 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (29%), parent=180 (42%), specialist=49 (11%), teacher=75 (18%).
