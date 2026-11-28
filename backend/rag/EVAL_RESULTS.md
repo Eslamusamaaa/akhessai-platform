@@ -308,3 +308,8 @@ answers the query): `overall n=48 Recall@6=0.8413 MRR=0.9323 Precision@6=0.7812`
 
 New source Understood.org: toddler ADHD vs typical activity, ADHD or immaturity (preschool referral), eight classroom ADHD strategies incl. wait time (teacher), trouble focusing, ADHD outbursts, executive-function board games, ADHD discipline. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8413 MRR=0.9340 Precision@6=0.7847`. Baseline re-recorded. Coverage: Gap list (9 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (28%), parent=189 (43%), specialist=49 (11%), teacher=76 (17%).
+
+## Corpus batch 33 (443 docs)
+
+New source National Autistic Society (UK): routine and preparing for change, stimming (when to leave it, harmful stims), focused interests, masking at school (teacher), demand avoidance. Per-query top-6: one-for-one swap only; tiny profile MRR jitter is run-to-run embedding noise. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8413 MRR=0.9323 Precision@6=0.7847`. Baseline re-recorded. Coverage: Gap list (9 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (28%), parent=193 (44%), specialist=49 (11%), teacher=77 (17%).
