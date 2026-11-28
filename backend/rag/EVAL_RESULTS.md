@@ -243,3 +243,8 @@ answers the query): `overall n=48 Recall@6=0.8174 MRR=0.9219 Precision@6=0.7431`
 
 Adds 7 sourced parent documents: NHS ADHD in children (under-5 caution, home support, assessment pathway), NHS Help your baby learn to talk (0-18 months, 18 months-3 years), ASHA speech sound disorders and late talker vs language problem. The Gulf-dialect language query gained two directly applicable labels; dialect recall dips only because its label count grew. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8187 MRR=0.9219 Precision@6=0.7465`. Baseline re-recorded. Coverage: Gap list (18 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (33%), parent=150 (39%), specialist=46 (12%), teacher=61 (16%).
+
+## Corpus batch 20 (387 docs)
+
+Adds 6 sourced autism documents from NICHD: early signs at 12-18 months and regression, early intervention, ABA-based behaviour therapies, joint attention therapy, parent-mediated therapy, and social skills training. Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8326 MRR=0.9323 Precision@6=0.7604`. Baseline re-recorded. Coverage: Gap list (18 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (32%), parent=153 (40%), specialist=48 (12%), teacher=62 (16%).
