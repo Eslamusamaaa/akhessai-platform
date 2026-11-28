@@ -1,7 +1,7 @@
 {
   "model": "openrouter:baai/bge-m3",
   "store": "memory",
-  "corpus_docs": 387,
+  "corpus_docs": 390,
   "overall": {
     "n": 48,
     "recall@6": 0.8326,
