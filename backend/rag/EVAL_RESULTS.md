@@ -283,3 +283,8 @@ answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`
 
 2 KidsHealth parent docs: hearing evaluation schedule and tests, school accommodation plans vs IEP. Dropped a generic speech-therapy doc that displaced specific results Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
 answers the query): `overall n=48 Recall@6=0.8424 MRR=0.9323 Precision@6=0.7743`. Baseline re-recorded. Coverage: Gap list (13 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=170 (41%), specialist=49 (12%), teacher=73 (18%).
+
+## Corpus batch 28 (420 docs)
+
+4 HealthyChildren.org (AAP) parent docs: 2-year-old language variation, 2-year-old emotions, joint-attention signs of autism, positive discipline by age. Precision 0.7743 -> 0.7812; dialect recall dip from label growth only Eval (openrouter:baai/bge-m3, labels extended only where a new document directly
+answers the query): `overall n=48 Recall@6=0.8441 MRR=0.9323 Precision@6=0.7812`. Baseline re-recorded. Coverage: Gap list (13 touched cells under 8 docs; questions, docs). Dedicated audience docs: all=124 (30%), parent=174 (41%), specialist=49 (12%), teacher=73 (17%).
